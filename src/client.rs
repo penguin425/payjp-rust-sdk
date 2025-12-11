@@ -204,7 +204,8 @@ impl PayjpClient {
 
     /// Calculate retry delay with exponential backoff and jitter.
     fn calculate_retry_delay(&self, retry_count: u32) -> Duration {
-        let base = self.retry_initial_delay.as_millis() as u64 * 2u64.pow(retry_count);
+        let base = self.retry_initial_delay.as_millis() as u64
+            .saturating_mul(2u64.saturating_pow(retry_count));
         let max = self.retry_max_delay.as_millis() as u64;
         let capped = base.min(max);
 
