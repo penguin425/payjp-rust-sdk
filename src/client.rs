@@ -203,7 +203,12 @@ impl PayjpClient {
     }
 
     /// Calculate retry delay with exponential backoff and jitter.
+    ///
+    /// Uses saturating arithmetic to safely handle edge cases where retry_count
+    /// is very high (e.g., >= 64) which would otherwise cause overflow or panic.
     fn calculate_retry_delay(&self, retry_count: u32) -> Duration {
+        // Use saturating_pow to handle retry_count >= 64 safely
+        // Use saturating_mul to prevent overflow in the multiplication
         let base = (self.retry_initial_delay.as_millis() as u64)
             .saturating_mul(2u64.saturating_pow(retry_count));
         let max = self.retry_max_delay.as_millis() as u64;
@@ -306,12 +311,38 @@ mod tests {
         // Test that delay is within expected range
         for retry_count in 0..5 {
             let delay = client.calculate_retry_delay(retry_count);
-            let expected_base = DEFAULT_RETRY_INITIAL_DELAY.as_millis() as u64
-                * 2u64.pow(retry_count);
+            let expected_base = (DEFAULT_RETRY_INITIAL_DELAY.as_millis() as u64)
+                .saturating_mul(2u64.saturating_pow(retry_count));
             let expected_max = expected_base.min(DEFAULT_RETRY_MAX_DELAY.as_millis() as u64);
 
             assert!(delay.as_millis() as u64 >= expected_max / 2);
             assert!(delay.as_millis() as u64 <= expected_max);
         }
+    }
+
+    #[test]
+    fn test_retry_delay_overflow_safety() {
+        let client = PayjpClient::new("sk_test_xxxxx");
+
+        // Test edge cases with high retry counts that would overflow without saturation
+        for retry_count in [63, 64, 100, u32::MAX] {
+            let delay = client.calculate_retry_delay(retry_count);
+            let max = DEFAULT_RETRY_MAX_DELAY.as_millis() as u64;
+
+            // Should be capped at max_retry_delay, not panic or overflow
+            assert!(delay.as_millis() as u64 <= max);
+            assert!(delay.as_millis() as u64 >= max / 2);
+        }
+
+        // Test with custom options that could cause overflow
+        let options = ClientOptions::new()
+            .retry_initial_delay(Duration::from_secs(1))
+            .retry_max_delay(Duration::from_secs(30));
+
+        let client = PayjpClient::with_options("sk_test_xxxxx", options);
+
+        // Should not panic even with extreme retry counts
+        let delay = client.calculate_retry_delay(100);
+        assert!(delay.as_millis() as u64 <= 30_000);
     }
 }
