@@ -22,7 +22,7 @@ pub struct Charge {
     /// Charge creation timestamp (Unix timestamp).
     pub created: i64,
 
-    /// Amount in the smallest currency unit (e.g., JPY cents).
+    /// Amount in the smallest currency unit (e.g., cents for USD, yen for JPY).
     pub amount: i64,
 
     /// Three-letter ISO currency code (e.g., "jpy").
