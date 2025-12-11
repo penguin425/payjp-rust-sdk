@@ -18,11 +18,15 @@ pub mod platform;
 
 // Re-export commonly used types
 pub use card::{Card, CardService, CreateCardParams, ThreeDSecureStatus, UpdateCardParams};
-pub use charge::{Charge, ChargeService, CreateChargeParams, RefundParams, UpdateChargeParams};
+pub use charge::{
+    CaptureParams, Charge, ChargeService, CreateChargeParams, ListChargeParams, ReauthParams,
+    RefundParams, UpdateChargeParams,
+};
 pub use customer::{CreateCustomerParams, Customer, CustomerService, UpdateCustomerParams};
 pub use plan::{CreatePlanParams, Plan, PlanInterval, PlanService, UpdatePlanParams};
 pub use subscription::{
-    CreateSubscriptionParams, Subscription, SubscriptionService, SubscriptionStatus,
+    CancelSubscriptionParams, CreateSubscriptionParams, PauseSubscriptionParams,
+    ResumeSubscriptionParams, Subscription, SubscriptionService, SubscriptionStatus,
     UpdateSubscriptionParams,
 };
 pub use token::{CardDetails, CreateTokenParams, Token, TokenService};
@@ -32,4 +36,6 @@ pub use transfer::{Transfer, TransferService};
 pub use statement::{Statement, StatementService};
 pub use balance::{Balance, BalanceService};
 pub use term::{Term, TermService};
-pub use three_d_secure::{ThreeDSecureRequest, ThreeDSecureRequestService};
+pub use three_d_secure::{
+    CreateThreeDSecureRequestParams, ThreeDSecureRequest, ThreeDSecureRequestService,
+};

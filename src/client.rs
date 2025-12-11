@@ -210,7 +210,7 @@ impl PayjpClient {
         let capped = base.min(max);
 
         // Equal jitter: random between capped/2 and capped
-        let jittered = capped / 2 + rand::thread_rng().gen_range(0..=capped / 2);
+        let jittered = capped / 2 + rand::rng().random_range(0..=capped / 2);
         Duration::from_millis(jittered)
     }
 
