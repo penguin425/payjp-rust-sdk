@@ -34,7 +34,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Step 2: Create a customer with a card
-    let card = CardDetails::new("4242424242424242", 12, 2025, "123")
+    let card = CardDetails::new("4242424242424242", 12, 2030, "123")
         .name("佐藤次郎")
         .email("sato@example.com");
 

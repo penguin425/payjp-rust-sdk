@@ -13,7 +13,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = PayjpClient::new(api_key);
 
     // Create a token
-    let card = CardDetails::new("4242424242424242", 12, 2025, "123")
+    let card = CardDetails::new("4242424242424242", 12, 2030, "123")
         .name("鈴木一郎")
         .email("suzuki@example.com");
 
