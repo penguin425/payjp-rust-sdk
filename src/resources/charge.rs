@@ -417,7 +417,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateChargeParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().create(
     ///     CreateChargeParams::new(1000, "jpy")
     ///         .card("tok_xxxxx")
@@ -437,7 +437,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().retrieve("ch_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -454,7 +454,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, UpdateChargeParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().update(
     ///     "ch_xxxxx",
     ///     UpdateChargeParams::new().description("Updated description")
@@ -474,7 +474,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CaptureParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().capture("ch_xxxxx", CaptureParams::new()).await?;
     /// # Ok(())
     /// # }
@@ -491,7 +491,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, RefundParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().refund(
     ///     "ch_xxxxx",
     ///     RefundParams::new().reason("Customer request")
@@ -511,7 +511,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ReauthParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().reauth("ch_xxxxx", ReauthParams::new()).await?;
     /// # Ok(())
     /// # }
@@ -528,7 +528,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().tds_finish("ch_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -545,7 +545,7 @@ impl<'a> ChargeService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListChargeParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charges = client.charges().list(
     ///     ListChargeParams::new().limit(10)
     /// ).await?;

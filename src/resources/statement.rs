@@ -78,7 +78,7 @@ impl<'a> StatementService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let statement = client.statements().retrieve("st_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -95,7 +95,7 @@ impl<'a> StatementService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let urls = client.statements().statement_urls("st_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -112,7 +112,7 @@ impl<'a> StatementService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let statements = client.statements().list(
     ///     ListParams::new().limit(10)
     /// ).await?;

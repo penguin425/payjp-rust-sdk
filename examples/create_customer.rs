@@ -10,7 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = env::var("PAYJP_SECRET_KEY")
         .expect("PAYJP_SECRET_KEY environment variable not set");
 
-    let client = PayjpClient::new(api_key);
+    let client = PayjpClient::new(api_key)?;
 
     // Create a token for the card
     let card = CardDetails::new("4242424242424242", 12, 2030, "123")

@@ -13,7 +13,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = env::var("PAYJP_SECRET_KEY")
         .expect("PAYJP_SECRET_KEY environment variable not set");
 
-    let client = PayjpClient::new(api_key);
+    let client = PayjpClient::new(api_key)?;
 
     // Step 1: Create a plan
     println!("Creating plan...");

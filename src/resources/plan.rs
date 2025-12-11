@@ -223,7 +223,7 @@ impl<'a> PlanService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreatePlanParams, PlanInterval};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let plan = client.plans().create(
     ///     CreatePlanParams::new(1000, "jpy", PlanInterval::Month)
     ///         .name("Monthly Plan")
@@ -243,7 +243,7 @@ impl<'a> PlanService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let plan = client.plans().retrieve("pln_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -260,7 +260,7 @@ impl<'a> PlanService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, UpdatePlanParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let plan = client.plans().update(
     ///     "pln_xxxxx",
     ///     UpdatePlanParams::new().name("Updated Plan Name")
@@ -280,7 +280,7 @@ impl<'a> PlanService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let deleted = client.plans().delete("pln_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -297,7 +297,7 @@ impl<'a> PlanService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let plans = client.plans().list(
     ///     ListParams::new().limit(10)
     /// ).await?;

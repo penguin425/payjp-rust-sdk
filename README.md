@@ -31,7 +31,7 @@ use payjp::{PayjpClient, CreateChargeParams};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize the client with your secret key
-    let client = PayjpClient::new("sk_test_xxxxx");
+    let client = PayjpClient::new("sk_test_xxxxx")?;
 
     // Create a charge
     let charge = client.charges().create(
@@ -222,7 +222,7 @@ let options = ClientOptions::new()
     .retry_initial_delay(Duration::from_millis(500))
     .retry_max_delay(Duration::from_secs(30));
 
-let client = PayjpClient::with_options("sk_test_xxxxx", options);
+let client = PayjpClient::with_options("sk_test_xxxxx", options)?;
 ```
 
 ### Rate Limiting

@@ -154,7 +154,7 @@ impl<'a> TokenService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateTokenParams, CardDetails};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// // Test card number
     /// let card = CardDetails::new("4242424242424242", 12, 2025, "123")
     ///     .name("山田太郎");
@@ -176,7 +176,7 @@ impl<'a> TokenService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let token = client.tokens().retrieve("tok_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -193,7 +193,7 @@ impl<'a> TokenService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let token = client.tokens().tds_finish("tok_xxxxx").await?;
     /// # Ok(())
     /// # }

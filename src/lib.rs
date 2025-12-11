@@ -9,7 +9,7 @@
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let client = PayjpClient::new("sk_test_xxxxx");
+//!     let client = PayjpClient::new("sk_test_xxxxx")?;
 //!
 //!     // Create a charge
 //!     let charge = client.charges().create(
@@ -95,7 +95,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let charge = client.charges().retrieve("ch_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -111,7 +111,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let customer = client.customers().retrieve("cus_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -127,7 +127,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateCardParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let card = client.customer("cus_xxxxx")
     ///     .cards()
     ///     .create(CreateCardParams::new("tok_xxxxx"))
@@ -146,7 +146,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let token = client.tokens().retrieve("tok_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -162,7 +162,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let plan = client.plans().retrieve("pln_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -178,7 +178,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscription = client.subscriptions().retrieve("sub_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -194,7 +194,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let transfer = client.transfers().retrieve("tr_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -210,7 +210,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let event = client.events().retrieve("evnt_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -226,7 +226,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let account = client.account().retrieve().await?;
     /// # Ok(())
     /// # }
@@ -242,7 +242,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let statement = client.statements().retrieve("st_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -258,7 +258,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let balance = client.balances().retrieve("ba_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -274,7 +274,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let term = client.terms().retrieve("tm_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -290,7 +290,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tds_request = client.three_d_secure_requests().retrieve("tdsr_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -306,7 +306,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tenant = client.tenants().retrieve("ten_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -322,7 +322,7 @@ impl PayjpClient {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let transfer = client.tenant_transfers().retrieve("ttr_xxxxx").await?;
     /// # Ok(())
     /// # }

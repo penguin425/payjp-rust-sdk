@@ -158,7 +158,7 @@ impl<'a> ThreeDSecureRequestService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateThreeDSecureRequestParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tds_request = client.three_d_secure_requests().create(
     ///     CreateThreeDSecureRequestParams::new("token", "tok_xxxxx")
     ///         .return_url("https://example.com/callback")
@@ -180,7 +180,7 @@ impl<'a> ThreeDSecureRequestService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tds_request = client.three_d_secure_requests().retrieve("tdsr_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -197,7 +197,7 @@ impl<'a> ThreeDSecureRequestService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tds_requests = client.three_d_secure_requests().list(
     ///     ListParams::new().limit(10)
     /// ).await?;

@@ -67,7 +67,7 @@ impl<'a> AccountService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let account = client.account().retrieve().await?;
     /// println!("Merchant: {:?}", account.merchant_name);
     /// # Ok(())

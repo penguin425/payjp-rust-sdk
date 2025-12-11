@@ -238,7 +238,7 @@ impl<'a> TenantService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateTenantParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tenant = client.tenants().create(
     ///     CreateTenantParams::new()
     ///         .name("Sub-merchant")
@@ -258,7 +258,7 @@ impl<'a> TenantService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tenant = client.tenants().retrieve("ten_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -275,7 +275,7 @@ impl<'a> TenantService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, UpdateTenantParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tenant = client.tenants().update(
     ///     "ten_xxxxx",
     ///     UpdateTenantParams::new().name("Updated Name")
@@ -295,7 +295,7 @@ impl<'a> TenantService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let deleted = client.tenants().delete("ten_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -312,7 +312,7 @@ impl<'a> TenantService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let tenants = client.tenants().list(
     ///     ListParams::new().limit(10)
     /// ).await?;
@@ -330,7 +330,7 @@ impl<'a> TenantService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let urls = client.tenants().create_application_urls("ten_xxxxx").await?;
     /// # Ok(())
     /// # }

@@ -266,7 +266,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateSubscriptionParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscription = client.subscriptions().create(
     ///     CreateSubscriptionParams::new("cus_xxxxx", "pln_xxxxx")
     /// ).await?;
@@ -284,7 +284,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscription = client.subscriptions().retrieve("sub_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -301,7 +301,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, UpdateSubscriptionParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscription = client.subscriptions().update(
     ///     "sub_xxxxx",
     ///     UpdateSubscriptionParams::new().plan("pln_new")
@@ -325,7 +325,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, PauseSubscriptionParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscription = client.subscriptions().pause(
     ///     "sub_xxxxx",
     ///     PauseSubscriptionParams::new()
@@ -349,7 +349,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ResumeSubscriptionParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscription = client.subscriptions().resume(
     ///     "sub_xxxxx",
     ///     ResumeSubscriptionParams::new()
@@ -373,7 +373,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CancelSubscriptionParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscription = client.subscriptions().cancel(
     ///     "sub_xxxxx",
     ///     CancelSubscriptionParams::new()
@@ -397,7 +397,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let deleted = client.subscriptions().delete("sub_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -414,7 +414,7 @@ impl<'a> SubscriptionService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let subscriptions = client.subscriptions().list(
     ///     ListParams::new().limit(10)
     /// ).await?;

@@ -107,9 +107,10 @@ impl PayjpClient {
     /// ```no_run
     /// use payjp::PayjpClient;
     ///
-    /// let client = PayjpClient::new("sk_test_xxxxx");
+    /// let client = PayjpClient::new("sk_test_xxxxx")?;
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
     /// ```
-    pub fn new(api_key: impl Into<String>) -> Self {
+    pub fn new(api_key: impl Into<String>) -> PayjpResult<Self> {
         Self::with_options(api_key, ClientOptions::default())
     }
 
@@ -125,22 +126,22 @@ impl PayjpClient {
     ///     .timeout(Duration::from_secs(60))
     ///     .max_retry(5);
     ///
-    /// let client = PayjpClient::with_options("sk_test_xxxxx", options);
+    /// let client = PayjpClient::with_options("sk_test_xxxxx", options)?;
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
     /// ```
-    pub fn with_options(api_key: impl Into<String>, options: ClientOptions) -> Self {
+    pub fn with_options(api_key: impl Into<String>, options: ClientOptions) -> PayjpResult<Self> {
         let http_client = reqwest::Client::builder()
             .timeout(options.timeout)
-            .build()
-            .expect("Failed to create HTTP client");
+            .build()?;
 
-        Self {
+        Ok(Self {
             api_key: api_key.into(),
             http_client,
             base_url: options.base_url,
             max_retry: options.max_retry,
             retry_initial_delay: options.retry_initial_delay,
             retry_max_delay: options.retry_max_delay,
-        }
+        })
     }
 
     /// Get the base URL for the API.
@@ -289,7 +290,7 @@ mod tests {
 
     #[test]
     fn test_client_creation() {
-        let client = PayjpClient::new("sk_test_xxxxx");
+        let client = PayjpClient::new("sk_test_xxxxx").expect("Failed to create client");
         assert_eq!(client.base_url(), DEFAULT_BASE_URL);
     }
 
@@ -299,14 +300,15 @@ mod tests {
             .base_url("https://custom.api.pay.jp/v1")
             .max_retry(5);
 
-        let client = PayjpClient::with_options("sk_test_xxxxx", options);
+        let client = PayjpClient::with_options("sk_test_xxxxx", options)
+            .expect("Failed to create client with options");
         assert_eq!(client.base_url(), "https://custom.api.pay.jp/v1");
         assert_eq!(client.max_retry, 5);
     }
 
     #[test]
     fn test_retry_delay_calculation() {
-        let client = PayjpClient::new("sk_test_xxxxx");
+        let client = PayjpClient::new("sk_test_xxxxx").expect("Failed to create client");
 
         // Test that delay is within expected range
         for retry_count in 0..5 {
@@ -322,7 +324,7 @@ mod tests {
 
     #[test]
     fn test_retry_delay_overflow_safety() {
-        let client = PayjpClient::new("sk_test_xxxxx");
+        let client = PayjpClient::new("sk_test_xxxxx").expect("Failed to create client");
 
         // Test edge cases with high retry counts that would overflow without saturation
         for retry_count in [63, 64, 100, u32::MAX] {
@@ -339,7 +341,8 @@ mod tests {
             .retry_initial_delay(Duration::from_secs(1))
             .retry_max_delay(Duration::from_secs(30));
 
-        let client = PayjpClient::with_options("sk_test_xxxxx", options);
+        let client = PayjpClient::with_options("sk_test_xxxxx", options)
+            .expect("Failed to create client with custom options");
 
         // Should not panic even with extreme retry counts
         let delay = client.calculate_retry_delay(100);

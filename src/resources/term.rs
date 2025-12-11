@@ -55,7 +55,7 @@ impl<'a> TermService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let term = client.terms().retrieve("tm_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -72,7 +72,7 @@ impl<'a> TermService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let terms = client.terms().list(
     ///     ListParams::new().limit(10)
     /// ).await?;

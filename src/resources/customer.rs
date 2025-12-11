@@ -184,7 +184,7 @@ impl<'a> CustomerService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateCustomerParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let customer = client.customers().create(
     ///     CreateCustomerParams::new()
     ///         .email("customer@example.com")
@@ -204,7 +204,7 @@ impl<'a> CustomerService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let customer = client.customers().retrieve("cus_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -221,7 +221,7 @@ impl<'a> CustomerService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, UpdateCustomerParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let customer = client.customers().update(
     ///     "cus_xxxxx",
     ///     UpdateCustomerParams::new().email("new@example.com")
@@ -245,7 +245,7 @@ impl<'a> CustomerService<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let deleted = client.customers().delete("cus_xxxxx").await?;
     /// # Ok(())
     /// # }
@@ -262,7 +262,7 @@ impl<'a> CustomerService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, ListParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let customers = client.customers().list(
     ///     ListParams::new().limit(10)
     /// ).await?;
@@ -301,7 +301,7 @@ impl<'a> CustomerWrapper<'a> {
     /// ```no_run
     /// # use payjp::{PayjpClient, CreateCardParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let card = client.customer("cus_xxxxx")
     ///     .cards()
     ///     .create(CreateCardParams::new("tok_xxxxx"))
@@ -320,7 +320,7 @@ impl<'a> CustomerWrapper<'a> {
     /// ```no_run
     /// # use payjp::PayjpClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// # let client = PayjpClient::new("sk_test_xxxxx");
+    /// # let client = PayjpClient::new("sk_test_xxxxx")?;
     /// let customer = client.customer("cus_xxxxx").retrieve().await?;
     /// # Ok(())
     /// # }
