@@ -174,6 +174,18 @@ impl UpdateTenantParams {
         self
     }
 
+    /// Set the minimum transfer amount.
+    pub fn minimum_transfer_amount(mut self, amount: i64) -> Self {
+        self.minimum_transfer_amount = Some(amount);
+        self
+    }
+
+    /// Set the bank account.
+    pub fn bank_account(mut self, account: BankAccount) -> Self {
+        self.bank_account = Some(account);
+        self
+    }
+
     /// Add metadata to the tenant.
     pub fn metadata(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
         self.metadata
