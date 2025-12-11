@@ -17,7 +17,7 @@ pub mod three_d_secure;
 pub mod platform;
 
 // Re-export commonly used types
-pub use card::{Card, CardService, CreateCardParams, ThreeDSecureStatus, UpdateCardParams};
+pub use card::{Card, CardService, CardThreeDSecureStatus, CreateCardParams, UpdateCardParams};
 pub use charge::{
     CaptureParams, Charge, ChargeService, CreateChargeParams, ListChargeParams, ReauthParams,
     RefundParams, UpdateChargeParams,
@@ -38,4 +38,5 @@ pub use balance::{Balance, BalanceService};
 pub use term::{Term, TermService};
 pub use three_d_secure::{
     CreateThreeDSecureRequestParams, ThreeDSecureRequest, ThreeDSecureRequestService,
+    ThreeDSecureStatus,
 };

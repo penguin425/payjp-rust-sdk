@@ -69,15 +69,15 @@ pub use response::ListResponse;
 // Re-export resource types
 pub use resources::{
     Account, AccountService, Balance, BalanceService, CancelSubscriptionParams, CaptureParams,
-    Card, CardDetails, CardService, Charge, ChargeService, CreateCardParams, CreateChargeParams,
-    CreateCustomerParams, CreatePlanParams, CreateSubscriptionParams,
-    CreateThreeDSecureRequestParams, CreateTokenParams, Customer, CustomerService, Event,
-    EventData, EventService, EventType, ListChargeParams, PauseSubscriptionParams, Plan,
-    PlanInterval, PlanService, ReauthParams, RefundParams, ResumeSubscriptionParams, Statement,
-    StatementService, Subscription, SubscriptionService, SubscriptionStatus, Term, TermService,
-    ThreeDSecureRequest, ThreeDSecureRequestService, ThreeDSecureStatus, Token, TokenService,
-    Transfer, TransferService, UpdateCardParams, UpdateChargeParams, UpdateCustomerParams,
-    UpdatePlanParams, UpdateSubscriptionParams,
+    Card, CardDetails, CardService, CardThreeDSecureStatus, Charge, ChargeService,
+    CreateCardParams, CreateChargeParams, CreateCustomerParams, CreatePlanParams,
+    CreateSubscriptionParams, CreateThreeDSecureRequestParams, CreateTokenParams, Customer,
+    CustomerService, Event, EventData, EventService, EventType, ListChargeParams,
+    PauseSubscriptionParams, Plan, PlanInterval, PlanService, ReauthParams, RefundParams,
+    ResumeSubscriptionParams, Statement, StatementService, Subscription, SubscriptionService,
+    SubscriptionStatus, Term, TermService, ThreeDSecureRequest, ThreeDSecureRequestService,
+    ThreeDSecureStatus, Token, TokenService, Transfer, TransferService, UpdateCardParams,
+    UpdateChargeParams, UpdateCustomerParams, UpdatePlanParams, UpdateSubscriptionParams,
 };
 
 // Re-export platform types

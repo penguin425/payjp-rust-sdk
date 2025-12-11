@@ -3,7 +3,7 @@
 use crate::client::PayjpClient;
 use crate::error::PayjpResult;
 use crate::params::{ListParams, Metadata};
-use crate::resources::card::{Card, ThreeDSecureStatus};
+use crate::resources::card::{Card, CardThreeDSecureStatus};
 use crate::response::ListResponse;
 use serde::{Deserialize, Serialize};
 
@@ -86,7 +86,7 @@ pub struct Charge {
 
     /// 3D Secure status (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub three_d_secure_status: Option<ThreeDSecureStatus>,
+    pub three_d_secure_status: Option<CardThreeDSecureStatus>,
 
     /// Platform API: Tenant ID (optional).
     #[serde(skip_serializing_if = "Option::is_none")]

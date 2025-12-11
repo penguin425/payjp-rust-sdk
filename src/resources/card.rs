@@ -79,7 +79,7 @@ pub struct Card {
 
     /// 3D Secure support status (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub three_d_secure_status: Option<ThreeDSecureStatus>,
+    pub three_d_secure_status: Option<CardThreeDSecureStatus>,
 
     /// Email address (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -97,7 +97,7 @@ pub struct Card {
 /// 3D Secure status for a card.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
-pub enum ThreeDSecureStatus {
+pub enum CardThreeDSecureStatus {
     /// 3D Secure verification was not performed.
     Unverified,
 
