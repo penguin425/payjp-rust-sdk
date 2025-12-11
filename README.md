@@ -240,6 +240,57 @@ PAY.JP rate limits:
 | Test | payment | 2 |
 | Test | sk | 2 |
 
+## Architecture
+
+### Request Flow
+
+このSDKのリクエストフローを以下のシークエンス図で示します。SDKは自動的にリトライ処理、エラーハンドリング、認証を行います。
+
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant SDK as PayjpClient (SDK)
+    participant HTTP as HTTP Layer (reqwest)
+    participant API as PAY.JP API
+
+    App->>SDK: call resource method (e.g., charges.create)
+    SDK->>SDK: build path, method, and params
+    SDK->>HTTP: send HTTP request (Basic Auth header, timeout)
+    HTTP->>API: outbound request
+    API-->>HTTP: HTTP response (status, body)
+    HTTP-->>SDK: response returned
+
+    alt 2xx Success
+        SDK->>SDK: deserialize JSON -> T
+        SDK-->>App: Ok(T)
+    else 429 Rate Limit
+        SDK->>SDK: compute exponential backoff + jitter
+        SDK->>SDK: sleep(delay)
+        SDK->>HTTP: retry request (loop until max_retry)
+    else 401 Auth
+        SDK-->>App: Err(Auth)
+    else other error
+        SDK->>SDK: try parse ErrorResponse -> ApiError
+        SDK-->>App: Err(Api/Network/Serialization)
+    end
+```
+
+### リクエストフローの説明
+
+1. **アプリケーション呼び出し**: アプリケーションがSDKのリソースメソッド（例：`charges().create()`）を呼び出します。
+
+2. **リクエスト構築**: SDKは内部でAPIパス、HTTPメソッド、パラメータを構築し、Basic認証ヘッダーとUser-Agentを付加します。
+
+3. **HTTP送信**: reqwestライブラリを使用してHTTPリクエストをPAY.JP APIに送信します。タイムアウト設定も適用されます。
+
+4. **レスポンス処理**:
+   - **2xx 成功**: レスポンスボディをJSON→型`T`にデシリアライズし、`Ok(T)`を返します
+   - **429 レート制限**: 指数バックオフ + ジッター（ランダム遅延）を計算し、遅延後に自動リトライします（`max_retry`回まで）
+   - **401 認証エラー**: APIキーが無効な場合、`Err(PayjpError::Auth)`を返します
+   - **その他のエラー**: API エラーレスポンスをパースして`ApiError`に変換するか、ネットワークエラーやシリアライゼーションエラーとして返します
+
+このアーキテクチャにより、アプリケーションコードはシンプルに保たれ、SDKが複雑なエラーハンドリングとリトライロジックを自動的に処理します。
+
 ## Error Handling
 
 ```rust
