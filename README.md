@@ -4,6 +4,8 @@
 
 Rust SDK for [PAY.JP](https://pay.jp), a Japanese payment platform. This library provides type-safe, async/await interfaces to all PAY.JP APIs.
 
+English | [日本語](README.ja.md)
+
 ## Features
 
 - 🦀 **Type-safe** - Full type safety with Rust's type system
@@ -244,7 +246,7 @@ PAY.JP rate limits:
 
 ### Request Flow
 
-このSDKのリクエストフローを以下のシークエンス図で示します。SDKは自動的にリトライ処理、エラーハンドリング、認証を行います。
+The following sequence diagram illustrates the SDK's request flow. The SDK automatically handles retries, error handling, and authentication.
 
 ```mermaid
 sequenceDiagram
@@ -275,21 +277,21 @@ sequenceDiagram
     end
 ```
 
-### リクエストフローの説明
+### Request Flow Explanation
 
-1. **アプリケーション呼び出し**: アプリケーションがSDKのリソースメソッド（例：`charges().create()`）を呼び出します。
+1. **Application Call**: The application invokes an SDK resource method (e.g., `charges().create()`).
 
-2. **リクエスト構築**: SDKは内部でAPIパス、HTTPメソッド、パラメータを構築し、Basic認証ヘッダーとUser-Agentを付加します。
+2. **Request Construction**: The SDK internally builds the API path, HTTP method, and parameters, adding Basic authentication header and User-Agent.
 
-3. **HTTP送信**: reqwestライブラリを使用してHTTPリクエストをPAY.JP APIに送信します。タイムアウト設定も適用されます。
+3. **HTTP Transmission**: Sends the HTTP request to the PAY.JP API using the reqwest library. Timeout settings are also applied.
 
-4. **レスポンス処理**:
-   - **2xx 成功**: レスポンスボディをJSON→型`T`にデシリアライズし、`Ok(T)`を返します
-   - **429 レート制限**: 指数バックオフ + ジッター（ランダム遅延）を計算し、遅延後に自動リトライします（`max_retry`回まで）
-   - **401 認証エラー**: APIキーが無効な場合、`Err(PayjpError::Auth)`を返します
-   - **その他のエラー**: API エラーレスポンスをパースして`ApiError`に変換するか、ネットワークエラーやシリアライゼーションエラーとして返します
+4. **Response Processing**:
+   - **2xx Success**: Deserializes the response body from JSON to type `T` and returns `Ok(T)`
+   - **429 Rate Limit**: Calculates exponential backoff + jitter (random delay) and automatically retries after the delay (up to `max_retry` times)
+   - **401 Authentication Error**: Returns `Err(PayjpError::Auth)` when the API key is invalid
+   - **Other Errors**: Parses the API error response into `ApiError`, or returns as a network or serialization error
 
-このアーキテクチャにより、アプリケーションコードはシンプルに保たれ、SDKが複雑なエラーハンドリングとリトライロジックを自動的に処理します。
+This architecture keeps application code simple while the SDK automatically handles complex error handling and retry logic.
 
 ## Error Handling
 
