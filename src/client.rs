@@ -20,6 +20,9 @@ pub const DEFAULT_RETRY_INITIAL_DELAY: Duration = Duration::from_millis(500);
 /// Default maximum retry delay (10 seconds).
 pub const DEFAULT_RETRY_MAX_DELAY: Duration = Duration::from_secs(10);
 
+/// User-Agent header value for API requests.
+const USER_AGENT: &str = concat!("payjp-rust/", env!("CARGO_PKG_VERSION"));
+
 /// Configuration options for the PAY.JP client.
 #[derive(Debug, Clone)]
 pub struct ClientOptions {
@@ -238,7 +241,7 @@ impl PayjpClient {
             .http_client
             .request(method.clone(), &url)
             .header("Authorization", auth_header)
-            .header("User-Agent", "payjp-rust/0.1.0");
+            .header("User-Agent", USER_AGENT);
 
         // Add body based on method
         request = if method == Method::GET {
@@ -347,5 +350,16 @@ mod tests {
         // Should not panic even with extreme retry counts
         let delay = client.calculate_retry_delay(100);
         assert!(delay.as_millis() as u64 <= 30_000);
+    }
+
+    #[test]
+    fn test_user_agent_format() {
+        // Verify USER_AGENT is correctly formatted with package version
+        assert!(USER_AGENT.starts_with("payjp-rust/"));
+        assert_eq!(USER_AGENT, concat!("payjp-rust/", env!("CARGO_PKG_VERSION")));
+
+        // Verify it matches the expected format
+        let version = env!("CARGO_PKG_VERSION");
+        assert_eq!(USER_AGENT, format!("payjp-rust/{}", version));
     }
 }
