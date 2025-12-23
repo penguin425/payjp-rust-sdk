@@ -3,6 +3,7 @@
 use crate::error::{ErrorResponse, PayjpError, PayjpResult};
 use base64::{engine::general_purpose, Engine as _};
 use rand::Rng;
+use reqwest::header::HeaderValue;
 use reqwest::{Method, StatusCode};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -219,7 +220,7 @@ impl PayjpClient {
         let capped = base.min(max);
 
         // Equal jitter: random between capped/2 and capped
-        let jittered = capped / 2 + rand::thread_rng().gen_range(0..=capped / 2);
+        let jittered = capped / 2 + rand::rng().random_range(0..=capped / 2);
         Duration::from_millis(jittered)
     }
 
@@ -235,13 +236,18 @@ impl PayjpClient {
         // Create basic auth header
         let auth = format!("{}:", self.api_key);
         let encoded = general_purpose::STANDARD.encode(auth.as_bytes());
-        let auth_header = format!("Basic {}", encoded);
+        let auth_header_str = format!("Basic {}", encoded);
+
+        // Convert header values explicitly
+        let auth_header = HeaderValue::from_str(&auth_header_str)
+            .map_err(|_| PayjpError::InvalidRequest("Invalid authorization header".to_string()))?;
+        let user_agent = HeaderValue::from_static(USER_AGENT);
 
         let mut request = self
             .http_client
             .request(method.clone(), &url)
             .header("Authorization", auth_header)
-            .header("User-Agent", USER_AGENT);
+            .header("User-Agent", user_agent);
 
         // Add body based on method
         request = if method == Method::GET {
