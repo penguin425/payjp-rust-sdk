@@ -442,7 +442,7 @@ mod tests {
         let params2 = CreateTokenParams::from_card(card2);
         let encoded2 = serde_urlencoded::to_string(&params2).expect("Failed to encode");
 
-        assert!(encoded2.contains("card%5Bname%5D=Test"));
-        assert!(encoded2.contains("card%5Bemail%5D=test"));
+        assert!(encoded2.contains("card%5Bname%5D=Test+User"));
+        assert!(encoded2.contains("card%5Bemail%5D=test%40example.com"));
     }
 }
