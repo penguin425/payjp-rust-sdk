@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create(
             CreateCustomerParams::new()
                 .email("tanaka@example.com")
-                .description("VIP Customer")
+                .description("VIPカスタマー")
                 .card(token.id)
                 .metadata("customer_type", "vip")
                 .metadata("signup_date", "2024-01-01"),

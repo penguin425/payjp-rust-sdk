@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .plans()
         .create(
             CreatePlanParams::new(980, "jpy", PlanInterval::Month)
-                .name("Monthly Plan")
+                .name("月額プラン")
                 .trial_days(7)
                 .metadata("plan_type", "basic"),
         )
