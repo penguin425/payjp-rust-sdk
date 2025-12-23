@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .plans()
         .create(
             CreatePlanParams::new(980, "jpy", PlanInterval::Month)
-                .name("月額プラン")
+                .name("Monthly Plan")
                 .trial_days(7)
                 .metadata("plan_type", "basic"),
         )
@@ -35,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Step 2: Create a customer with a card
     let card = CardDetails::new("4242424242424242", 12, 2030, "123")
-        .name("佐藤次郎")
+        .name("Jiro Sato")
         .email("sato@example.com");
 
     println!("\nCreating token...");

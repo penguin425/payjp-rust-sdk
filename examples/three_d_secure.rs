@@ -14,7 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create a token
     let card = CardDetails::new("4242424242424242", 12, 2030, "123")
-        .name("鈴木一郎")
+        .name("Ichiro Suzuki")
         .email("suzuki@example.com");
 
     println!("Creating token...");

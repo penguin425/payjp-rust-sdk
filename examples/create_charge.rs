@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         2030,               // Expiration year
         "123",              // CVC
     )
-    .name("山田太郎")
+    .name("Taro Yamada")
     .email("test@example.com");
 
     println!("Creating token...");
@@ -39,9 +39,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create(
             CreateChargeParams::new(1000, "jpy")
                 .card(token.id)
-                .description("テスト支払い")
+                .description("Test payment")
                 .metadata("order_id", "12345")
-                .metadata("customer_name", "山田太郎"),
+                .metadata("customer_name", "Taro Yamada"),
         )
         .await?;
 

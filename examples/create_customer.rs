@@ -14,7 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create a token for the card
     let card = CardDetails::new("4242424242424242", 12, 2030, "123")
-        .name("田中花子")
+        .name("Hanako Tanaka")
         .email("tanaka@example.com");
 
     println!("Creating token...");
@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create(
             CreateCustomerParams::new()
                 .email("tanaka@example.com")
-                .description("VIPカスタマー")
+                .description("VIP Customer")
                 .card(token.id)
                 .metadata("customer_type", "vip")
                 .metadata("signup_date", "2024-01-01"),
