@@ -153,6 +153,12 @@ impl PayjpClient {
         &self.base_url
     }
 
+    /// Get the API key (for testing purposes).
+    #[cfg(test)]
+    pub(crate) fn api_key(&self) -> &str {
+        &self.api_key
+    }
+
     /// Send a GET request.
     pub(crate) async fn get<T: DeserializeOwned>(&self, path: &str) -> PayjpResult<T> {
         self.request_with_retry(Method::GET, path, None::<&()>)
@@ -368,5 +374,37 @@ mod tests {
         // Verify it matches the expected format
         let version = env!("CARGO_PKG_VERSION");
         assert_eq!(USER_AGENT, format!("payjp-rust/{}", version));
+    }
+
+    #[test]
+    fn test_api_key_whitespace_trimming() {
+        // Test with trailing newline (common case from environment variables)
+        let client = PayjpClient::new("sk_test_xxxxx\n").expect("Failed to create client");
+        assert_eq!(client.api_key(), "sk_test_xxxxx");
+
+        // Test with leading and trailing spaces
+        let client2 = PayjpClient::new(" sk_test_yyyyy ").expect("Failed with spaces");
+        assert_eq!(client2.api_key(), "sk_test_yyyyy");
+
+        // Test with tabs
+        let client3 = PayjpClient::new("\tsk_test_zzzzz\t").expect("Failed with tabs");
+        assert_eq!(client3.api_key(), "sk_test_zzzzz");
+
+        // Test with mixed whitespace
+        let client4 = PayjpClient::new(" \n\tsk_test_mixed\t\n ").expect("Failed with mixed whitespace");
+        assert_eq!(client4.api_key(), "sk_test_mixed");
+
+        // Test with carriage return and newline (Windows-style)
+        let client5 = PayjpClient::new("sk_test_windows\r\n").expect("Failed with CRLF");
+        assert_eq!(client5.api_key(), "sk_test_windows");
+    }
+
+    #[test]
+    fn test_api_key_whitespace_with_options() {
+        // Test that whitespace trimming also works with with_options
+        let options = ClientOptions::new();
+        let client = PayjpClient::with_options("sk_test_options\n", options)
+            .expect("Failed to create client with options");
+        assert_eq!(client.api_key(), "sk_test_options");
     }
 }
