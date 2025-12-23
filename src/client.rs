@@ -419,4 +419,30 @@ mod tests {
             .expect("Failed to create client with options");
         assert_eq!(client.api_key(), "sk_test_options");
     }
+
+    #[test]
+    fn test_form_encoding_with_nested_structures() {
+        use crate::resources::token::{CardDetails, CreateTokenParams};
+
+        // Test 1: Simple card
+        let card1 = CardDetails::new("4242424242424242", 12, 2030, "123");
+        let params1 = CreateTokenParams::from_card(card1);
+        let encoded1 = serde_urlencoded::to_string(&params1).expect("Failed to encode");
+
+        // Should contain card[field] format
+        assert!(encoded1.contains("card%5Bnumber%5D=4242424242424242"));
+        assert!(encoded1.contains("card%5Bexp_month%5D=12"));
+        assert!(encoded1.contains("card%5Bexp_year%5D=2030"));
+        assert!(encoded1.contains("card%5Bcvc%5D=123"));
+
+        // Test 2: Card with optional fields
+        let card2 = CardDetails::new("4242424242424242", 12, 2030, "123")
+            .name("Test User")
+            .email("test@example.com");
+        let params2 = CreateTokenParams::from_card(card2);
+        let encoded2 = serde_urlencoded::to_string(&params2).expect("Failed to encode");
+
+        assert!(encoded2.contains("card%5Bname%5D=Test+User"));
+        assert!(encoded2.contains("card%5Bemail%5D=test%40example.com"));
+    }
 }
