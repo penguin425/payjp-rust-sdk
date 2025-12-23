@@ -139,7 +139,7 @@ impl PayjpClient {
             .build()?;
 
         Ok(Self {
-            api_key: api_key.into(),
+            api_key: api_key.into().trim().to_string(),
             http_client,
             base_url: options.base_url,
             max_retry: options.max_retry,
