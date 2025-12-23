@@ -33,51 +33,55 @@ pub struct Token {
 #[derive(Debug, Default, Clone, Serialize)]
 pub struct CardDetails {
     /// Card number (without spaces or hyphens).
+    #[serde(rename = "card[number]")]
     pub number: String,
 
     /// Card expiration month (1-12).
+    #[serde(rename = "card[exp_month]")]
     pub exp_month: i32,
 
     /// Card expiration year (4 digits).
+    #[serde(rename = "card[exp_year]")]
     pub exp_year: i32,
 
     /// Card CVC/CVV code.
+    #[serde(rename = "card[cvc]")]
     pub cvc: String,
 
     /// Cardholder name (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[name]")]
     pub name: Option<String>,
 
     /// Address line 1 (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[address_line1]")]
     pub address_line1: Option<String>,
 
     /// Address line 2 (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[address_line2]")]
     pub address_line2: Option<String>,
 
     /// Address city (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[address_city]")]
     pub address_city: Option<String>,
 
     /// Address state/prefecture (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[address_state]")]
     pub address_state: Option<String>,
 
     /// Address ZIP/postal code (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[address_zip]")]
     pub address_zip: Option<String>,
 
     /// Address country (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[country]")]
     pub country: Option<String>,
 
     /// Email address (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[email]")]
     pub email: Option<String>,
 
     /// Phone number (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "card[phone]")]
     pub phone: Option<String>,
 }
 
@@ -118,7 +122,7 @@ impl CardDetails {
 #[derive(Debug, Default, Clone, Serialize)]
 pub struct CreateTokenParams {
     /// Raw card details (server-side only for testing).
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", flatten)]
     pub card: Option<CardDetails>,
 }
 

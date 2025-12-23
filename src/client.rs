@@ -272,7 +272,11 @@ impl PayjpClient {
                 request
             }
         } else if let Some(params) = body {
-            request.form(params)
+            // Manually encode form data with proper card[field] format
+            let encoded = serde_urlencoded::to_string(params)
+                .map_err(|e| PayjpError::InvalidRequest(format!("Failed to encode form data: {}", e)))?;
+            let content_type = HeaderValue::from_static("application/x-www-form-urlencoded");
+            request.header("Content-Type", content_type).body(encoded)
         } else {
             request
         };
