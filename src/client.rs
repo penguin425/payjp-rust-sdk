@@ -106,6 +106,10 @@ pub struct PayjpClient {
 impl PayjpClient {
     /// Create a new PAY.JP client with the given API key.
     ///
+    /// Leading and trailing whitespace in the API key will be automatically trimmed.
+    /// This is useful when reading API keys from environment variables or shell commands,
+    /// which often include trailing newlines.
+    ///
     /// # Example
     ///
     /// ```no_run
@@ -119,6 +123,10 @@ impl PayjpClient {
     }
 
     /// Create a new PAY.JP client with custom options.
+    ///
+    /// Leading and trailing whitespace in the API key will be automatically trimmed.
+    /// This is useful when reading API keys from environment variables or shell commands,
+    /// which often include trailing newlines.
     ///
     /// # Example
     ///
