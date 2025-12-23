@@ -146,8 +146,15 @@ impl PayjpClient {
             .timeout(options.timeout)
             .build()?;
 
+        let trimmed_key = api_key.into().trim().to_string();
+        if trimmed_key.is_empty() {
+            return Err(PayjpError::InvalidRequest(
+                "API key cannot be empty".to_string(),
+            ));
+        }
+
         Ok(Self {
-            api_key: api_key.into().trim().to_string(),
+            api_key: trimmed_key,
             http_client,
             base_url: options.base_url,
             max_retry: options.max_retry,
@@ -418,5 +425,44 @@ mod tests {
         let client = PayjpClient::with_options("sk_test_options\n", options)
             .expect("Failed to create client with options");
         assert_eq!(client.api_key(), "sk_test_options");
+    }
+
+    #[test]
+    fn test_api_key_whitespace_only() {
+        // Test that API keys consisting only of whitespace are rejected
+        let result = PayjpClient::new("   ");
+        assert!(result.is_err());
+        if let Err(PayjpError::InvalidRequest(msg)) = result {
+            assert_eq!(msg, "API key cannot be empty");
+        } else {
+            panic!("Expected InvalidRequest error for whitespace-only API key");
+        }
+
+        // Test with newlines and tabs
+        let result2 = PayjpClient::new("\n\t\n");
+        assert!(result2.is_err());
+        if let Err(PayjpError::InvalidRequest(msg)) = result2 {
+            assert_eq!(msg, "API key cannot be empty");
+        } else {
+            panic!("Expected InvalidRequest error for whitespace-only API key");
+        }
+
+        // Test with mixed whitespace
+        let result3 = PayjpClient::new(" \n\t\r\n ");
+        assert!(result3.is_err());
+        if let Err(PayjpError::InvalidRequest(msg)) = result3 {
+            assert_eq!(msg, "API key cannot be empty");
+        } else {
+            panic!("Expected InvalidRequest error for whitespace-only API key");
+        }
+
+        // Test with empty string
+        let result4 = PayjpClient::new("");
+        assert!(result4.is_err());
+        if let Err(PayjpError::InvalidRequest(msg)) = result4 {
+            assert_eq!(msg, "API key cannot be empty");
+        } else {
+            panic!("Expected InvalidRequest error for empty API key");
+        }
     }
 }
