@@ -239,8 +239,9 @@ impl PayjpClient {
         let auth_header_str = format!("Basic {}", encoded);
 
         // Convert header values explicitly
-        let auth_header = HeaderValue::from_str(&auth_header_str)
-            .map_err(|_| PayjpError::InvalidRequest("Invalid authorization header".to_string()))?;
+        let auth_header = HeaderValue::from_str(&auth_header_str).map_err(|e| {
+            PayjpError::InvalidRequest(format!("Invalid authorization header: {}", e))
+        })?;
         let user_agent = HeaderValue::from_static(USER_AGENT);
 
         let mut request = self
