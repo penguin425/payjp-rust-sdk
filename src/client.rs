@@ -430,39 +430,22 @@ mod tests {
     #[test]
     fn test_api_key_whitespace_only() {
         // Test that API keys consisting only of whitespace are rejected
-        let result = PayjpClient::new("   ");
-        assert!(result.is_err());
-        if let Err(PayjpError::InvalidRequest(msg)) = result {
-            assert_eq!(msg, "API key cannot be empty");
-        } else {
-            panic!("Expected InvalidRequest error for whitespace-only API key");
-        }
+        let test_cases = vec![
+            ("   ", "spaces only"),
+            ("\n\t\n", "newlines and tabs"),
+            (" \n\t\r\n ", "mixed whitespace"),
+            ("", "empty string"),
+        ];
 
-        // Test with newlines and tabs
-        let result2 = PayjpClient::new("\n\t\n");
-        assert!(result2.is_err());
-        if let Err(PayjpError::InvalidRequest(msg)) = result2 {
-            assert_eq!(msg, "API key cannot be empty");
-        } else {
-            panic!("Expected InvalidRequest error for whitespace-only API key");
-        }
-
-        // Test with mixed whitespace
-        let result3 = PayjpClient::new(" \n\t\r\n ");
-        assert!(result3.is_err());
-        if let Err(PayjpError::InvalidRequest(msg)) = result3 {
-            assert_eq!(msg, "API key cannot be empty");
-        } else {
-            panic!("Expected InvalidRequest error for whitespace-only API key");
-        }
-
-        // Test with empty string
-        let result4 = PayjpClient::new("");
-        assert!(result4.is_err());
-        if let Err(PayjpError::InvalidRequest(msg)) = result4 {
-            assert_eq!(msg, "API key cannot be empty");
-        } else {
-            panic!("Expected InvalidRequest error for empty API key");
+        for (input, description) in test_cases {
+            let result = PayjpClient::new(input);
+            assert!(result.is_err(), "Expected error for {}", description);
+            match result {
+                Err(PayjpError::InvalidRequest(msg)) => {
+                    assert_eq!(msg, "API key cannot be empty", "Wrong error message for {}", description);
+                }
+                _ => panic!("Expected InvalidRequest error for {}", description),
+            }
         }
     }
 }
