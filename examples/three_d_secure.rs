@@ -56,6 +56,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("✓ 3D Secure request created!");
     println!("  ID: {}", tds_request.id);
+    println!("  Resource type: {:?}", tds_request.resource_type);
+    println!("  Resource ID: {:?}", tds_request.resource_id);
     println!("  Status: {:?}", tds_request.status);
 
     if let Some(auth_url) = &tds_request.authentication_url {
