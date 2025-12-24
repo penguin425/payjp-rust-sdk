@@ -65,7 +65,7 @@ cargo run --example create_token_public
 
 ### Statistics
 ```
-17 files changed, 1154 insertions(+), 91 deletions(-)
+18 files changed, 1226 insertions(+), 136 deletions(-)
 ```
 
 ## Testing
