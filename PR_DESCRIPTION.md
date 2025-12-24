@@ -78,7 +78,7 @@ cargo run --example create_token_public
   - ✅ `charge_with_token` - Charge creation with token works
   - ✅ `create_customer` - Customer creation with token works (CardOrId enum handles card IDs correctly)
   - ✅ `subscription` - Full subscription lifecycle works (create plan, customer, subscription, pause, resume, delete)
-  - ✅ `three_d_secure` - Fixed API implementation to use correct parameters (resource_id only)
+  - ✅ `three_d_secure` - Complete implementation verified with real API (corrected response structure based on actual API behavior)
 
 ## Architecture
 
@@ -119,6 +119,11 @@ This PR enables token creation for accounts with strict security settings that b
 ## Commit History
 
 ```
+f4cc671 Finalize 3D Secure implementation with correct API response structure
+f12023d Make status optional and add Unknown variant for debugging API response
+3b1d79a Make resource_type and resource_id optional in ThreeDSecureRequest to debug API response
+b40da34 Fix ThreeDSecureRequest deserialization: resource_id is required field
+f554b0d Update PR description with 3D Secure fix and all testing results
 e01a302 Fix 3D Secure API implementation to match PAY.JP specification
 29fe1fb Update PR description with final testing results and statistics
 8af1f4a Fix metadata serialization issue in examples
