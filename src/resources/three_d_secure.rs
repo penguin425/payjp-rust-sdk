@@ -21,12 +21,11 @@ pub struct ThreeDSecureRequest {
     /// Request creation timestamp (Unix timestamp).
     pub created: i64,
 
-    /// Resource type being authenticated ("token" or "charge").
+    /// Resource type being authenticated ("card" or "charge").
     pub resource_type: String,
 
-    /// Resource ID (token or charge ID, optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub resource_id: Option<String>,
+    /// Resource ID (card or charge ID).
+    pub resource_id: String,
 
     /// 3DS authentication status.
     pub status: ThreeDSecureStatus,
