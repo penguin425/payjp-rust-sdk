@@ -1,5 +1,18 @@
 //! Example: Creating a charge
 //!
+//! **IMPORTANT SECURITY NOTE:**
+//! This example demonstrates creating tokens with raw card data for testing purposes only.
+//! PAY.JP may reject direct card number submissions depending on your account settings.
+//!
+//! If you receive an "unsafe_credit_card_param" error, you have two options:
+//! 1. Enable "Allow unsafe card parameters" in your PAY.JP dashboard (Test mode only)
+//!    - Go to: https://pay.jp/d/settings
+//!    - Under "Test mode settings", enable the option
+//! 2. Use PAY.JP.js to create tokens on the client side (recommended for production)
+//!
+//! In production, you should ALWAYS use PAY.JP.js, payjp-ios, or payjp-android
+//! to create tokens client-side and never send raw card data to your server.
+//!
 //! Run with: cargo run --example create_charge
 
 use payjp::{CardDetails, CreateChargeParams, CreateTokenParams, PayjpClient};

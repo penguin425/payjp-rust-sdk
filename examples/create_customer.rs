@@ -1,5 +1,12 @@
 //! Example: Creating a customer with a card
 //!
+//! **IMPORTANT SECURITY NOTE:**
+//! This example creates tokens with raw card data for testing purposes only.
+//! If you receive an "unsafe_credit_card_param" error, enable "Allow unsafe card parameters"
+//! in your PAY.JP dashboard Test mode settings: https://pay.jp/d/settings
+//!
+//! In production, always use PAY.JP.js to create tokens client-side.
+//!
 //! Run with: cargo run --example create_customer
 
 use payjp::{CardDetails, CreateCustomerParams, CreateTokenParams, PayjpClient};
