@@ -90,19 +90,8 @@ pub struct ThreeDSecureResult {
 /// Parameters for creating a 3D Secure request.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateThreeDSecureRequestParams {
-    /// Resource type ("token" or "charge").
-    pub resource_type: String,
-
-    /// Resource ID (token or charge ID).
+    /// Resource ID (card ID like `car_xxxxx` or charge ID like `ch_xxxxx`).
     pub resource_id: String,
-
-    /// Return URL after authentication (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub return_url: Option<String>,
-
-    /// State parameter to pass through callback (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub state: Option<String>,
 
     /// Tenant ID (Platform API, optional).
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -111,26 +100,20 @@ pub struct CreateThreeDSecureRequestParams {
 
 impl CreateThreeDSecureRequestParams {
     /// Create new 3DS request parameters.
-    pub fn new(resource_type: impl Into<String>, resource_id: impl Into<String>) -> Self {
+    ///
+    /// # Arguments
+    ///
+    /// * `resource_id` - A card ID (e.g., `car_xxxxx`) or charge ID (e.g., `ch_xxxxx`)
+    ///
+    /// # Note
+    ///
+    /// For cards, you must use a card ID that belongs to a customer.
+    /// You cannot use token IDs directly.
+    pub fn new(resource_id: impl Into<String>) -> Self {
         Self {
-            resource_type: resource_type.into(),
             resource_id: resource_id.into(),
-            return_url: None,
-            state: None,
             tenant: None,
         }
-    }
-
-    /// Set the return URL.
-    pub fn return_url(mut self, url: impl Into<String>) -> Self {
-        self.return_url = Some(url.into());
-        self
-    }
-
-    /// Set the state parameter.
-    pub fn state(mut self, state: impl Into<String>) -> Self {
-        self.state = Some(state.into());
-        self
     }
 
     /// Set the tenant ID (Platform API).
@@ -159,9 +142,9 @@ impl<'a> ThreeDSecureRequestService<'a> {
     /// # use payjp::{PayjpClient, CreateThreeDSecureRequestParams};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
     /// # let client = PayjpClient::new("sk_test_xxxxx")?;
+    /// // Create 3DS request for a customer's card
     /// let tds_request = client.three_d_secure_requests().create(
-    ///     CreateThreeDSecureRequestParams::new("token", "tok_xxxxx")
-    ///         .return_url("https://example.com/callback")
+    ///     CreateThreeDSecureRequestParams::new("car_xxxxx")
     /// ).await?;
     /// # Ok(())
     /// # }
