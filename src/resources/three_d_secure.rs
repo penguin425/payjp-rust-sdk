@@ -30,7 +30,8 @@ pub struct ThreeDSecureRequest {
     pub resource_id: Option<String>,
 
     /// 3DS authentication status.
-    pub status: ThreeDSecureStatus,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<ThreeDSecureStatus>,
 
     /// URL for 3DS authentication (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -70,6 +71,10 @@ pub enum ThreeDSecureStatus {
 
     /// Verification was aborted.
     Aborted,
+
+    /// Unknown status (for debugging).
+    #[serde(other)]
+    Unknown,
 }
 
 /// Result of a 3D Secure authentication.
