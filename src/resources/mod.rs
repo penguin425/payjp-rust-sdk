@@ -29,7 +29,7 @@ pub use subscription::{
     ResumeSubscriptionParams, Subscription, SubscriptionService, SubscriptionStatus,
     UpdateSubscriptionParams,
 };
-pub use token::{CardDetails, CreateTokenParams, Token, TokenService};
+pub use token::{CardDetails, CreateTokenParams, PublicTokenService, Token, TokenService};
 pub use account::{Account, AccountService};
 pub use event::{Event, EventData, EventService, EventType};
 pub use transfer::{Transfer, TransferService};

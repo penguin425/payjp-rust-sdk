@@ -207,3 +207,47 @@ impl<'a> TokenService<'a> {
         self.client.post(&path, &serde_json::json!({})).await
     }
 }
+
+/// Service for managing tokens with a public key (client-side).
+///
+/// This service can only create tokens using a public key. It's designed for
+/// client-side token creation to avoid sending raw card data to your server.
+pub struct PublicTokenService<'a> {
+    client: &'a crate::client::PayjpPublicClient,
+}
+
+impl<'a> PublicTokenService<'a> {
+    /// Create a new public token service.
+    pub(crate) fn new(client: &'a crate::client::PayjpPublicClient) -> Self {
+        Self { client }
+    }
+
+    /// Create a new token with a public key.
+    ///
+    /// This is the recommended way to create tokens - use a public key (pk_test_ or pk_live_)
+    /// to tokenize card data without sending it to your server.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// # use payjp::{PayjpPublicClient, CreateTokenParams, CardDetails};
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// let client = PayjpPublicClient::new("pk_test_xxxxx")?;
+    ///
+    /// // Test card number
+    /// let card = CardDetails::new("4242424242424242", 12, 2030, "123")
+    ///     .name("Taro Yamada");
+    ///
+    /// let token = client.tokens().create(
+    ///     CreateTokenParams::from_card(card)
+    /// ).await?;
+    ///
+    /// println!("Token ID: {}", token.id);
+    /// // Send token.id to your server
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn create(&self, params: CreateTokenParams) -> PayjpResult<Token> {
+        self.client.post("/tokens", &params).await
+    }
+}

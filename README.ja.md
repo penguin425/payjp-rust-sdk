@@ -63,7 +63,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 SDKをテストする最も簡単な方法は、事前に作成されたトークンを使用することです。
 
-**方法1: HTMLページでトークンを作成（最も互換性が高い）**
+**方法1: SDKと公開可能キーでトークンを作成（SDK利用者に推奨）**
+
+SDKの公開可能キークライアントを使って安全にトークンを作成：
+
+```bash
+# 公開可能キー（pk_test_xxxxx）を使用 - シークレットキーではありません
+export PAYJP_PUBLIC_KEY="pk_test_xxxxx"
+cargo run --example create_token_public
+
+# サンプルがトークンIDを出力します。それを使用：
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # 前のコマンドで取得したトークン
+cargo run --example charge_with_token
+```
+
+この方法は、適切なアーキテクチャを示しています：
+- クライアントは公開可能キーを使ってトークンを作成
+- サーバーはシークレットキーを使ってトークンで決済を処理
+- カードデータは決してサーバーに送信されない
+
+**方法2: HTMLページでトークンを作成（最も互換性が高い）**
 
 PAY.JPアカウントで厳格なセキュリティ設定が有効な場合（`unsafe_credit_card_param`エラーが返される場合）、付属のHTMLページを使用してください：
 

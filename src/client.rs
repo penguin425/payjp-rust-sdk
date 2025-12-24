@@ -312,6 +312,192 @@ impl PayjpClient {
     }
 }
 
+/// The PAY.JP client for public key operations (token creation only).
+///
+/// This client uses a public key (pk_test_ or pk_live_) and can only be used
+/// to create tokens. Use `PayjpClient` with a secret key for other operations.
+#[derive(Debug, Clone)]
+pub struct PayjpPublicClient {
+    public_key: String,
+    http_client: reqwest::Client,
+    base_url: String,
+    max_retry: u32,
+    retry_initial_delay: Duration,
+    retry_max_delay: Duration,
+}
+
+impl PayjpPublicClient {
+    /// Create a new PAY.JP public client with the given public key.
+    ///
+    /// Public keys start with `pk_test_` (for test mode) or `pk_live_` (for live mode).
+    /// Leading and trailing whitespace in the public key will be automatically trimmed.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use payjp::PayjpPublicClient;
+    ///
+    /// let client = PayjpPublicClient::new("pk_test_xxxxx")?;
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
+    pub fn new(public_key: impl Into<String>) -> PayjpResult<Self> {
+        Self::with_options(public_key, ClientOptions::default())
+    }
+
+    /// Create a new PAY.JP public client with custom options.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use payjp::{PayjpPublicClient, ClientOptions};
+    /// use std::time::Duration;
+    ///
+    /// let options = ClientOptions::new()
+    ///     .timeout(Duration::from_secs(60))
+    ///     .max_retry(5);
+    ///
+    /// let client = PayjpPublicClient::with_options("pk_test_xxxxx", options)?;
+    /// # Ok::<(), Box<dyn std::error::Error>>(())
+    /// ```
+    pub fn with_options(public_key: impl Into<String>, options: ClientOptions) -> PayjpResult<Self> {
+        let http_client = reqwest::Client::builder()
+            .timeout(options.timeout)
+            .build()?;
+
+        Ok(Self {
+            public_key: public_key.into().trim().to_string(),
+            http_client,
+            base_url: options.base_url,
+            max_retry: options.max_retry,
+            retry_initial_delay: options.retry_initial_delay,
+            retry_max_delay: options.retry_max_delay,
+        })
+    }
+
+    /// Get the base URL for the API.
+    pub fn base_url(&self) -> &str {
+        &self.base_url
+    }
+
+    /// Get the public key (for testing purposes).
+    #[cfg(test)]
+    pub(crate) fn public_key(&self) -> &str {
+        &self.public_key
+    }
+
+    /// Send a POST request (used only for token creation).
+    pub(crate) async fn post<T: DeserializeOwned, P: Serialize>(
+        &self,
+        path: &str,
+        params: &P,
+    ) -> PayjpResult<T> {
+        self.request_with_retry(Method::POST, path, Some(params))
+            .await
+    }
+
+    /// Send a request with retry logic for rate limiting.
+    async fn request_with_retry<T: DeserializeOwned>(
+        &self,
+        method: Method,
+        path: &str,
+        body: Option<&impl Serialize>,
+    ) -> PayjpResult<T> {
+        let mut retry_count = 0;
+
+        loop {
+            match self.send_request(method.clone(), path, body).await {
+                Ok(response) => return Ok(response),
+                Err(PayjpError::RateLimit) if retry_count < self.max_retry => {
+                    let delay = self.calculate_retry_delay(retry_count);
+                    tokio::time::sleep(delay).await;
+                    retry_count += 1;
+                }
+                Err(e) => return Err(e),
+            }
+        }
+    }
+
+    /// Calculate retry delay with exponential backoff and jitter.
+    fn calculate_retry_delay(&self, retry_count: u32) -> Duration {
+        let base = (self.retry_initial_delay.as_millis() as u64)
+            .saturating_mul(2u64.saturating_pow(retry_count));
+        let max = self.retry_max_delay.as_millis() as u64;
+        let capped = base.min(max);
+
+        // Equal jitter: random between capped/2 and capped
+        let jittered = capped / 2 + rand::rng().random_range(0..=capped / 2);
+        Duration::from_millis(jittered)
+    }
+
+    /// Send an HTTP request to the PAY.JP API.
+    async fn send_request<T: DeserializeOwned>(
+        &self,
+        method: Method,
+        path: &str,
+        body: Option<&impl Serialize>,
+    ) -> PayjpResult<T> {
+        let url = format!("{}{}", self.base_url, path);
+
+        // Create basic auth header with public key
+        // Public key is used as username, password is empty
+        let auth = format!("{}:", self.public_key);
+        let encoded = general_purpose::STANDARD.encode(auth.as_bytes());
+        let auth_header_str = format!("Basic {}", encoded);
+
+        // Convert header values explicitly
+        let auth_header = HeaderValue::from_str(&auth_header_str).map_err(|e| {
+            PayjpError::InvalidRequest(format!("Invalid authorization header: {}", e))
+        })?;
+        let user_agent = HeaderValue::from_static(USER_AGENT);
+
+        let mut request = self
+            .http_client
+            .request(method.clone(), &url)
+            .header("Authorization", auth_header)
+            .header("User-Agent", user_agent);
+
+        // Add body (public client only supports POST for token creation)
+        request = if let Some(params) = body {
+            // Manually encode form data with proper card[field] format
+            let encoded = serde_urlencoded::to_string(params)
+                .map_err(|e| PayjpError::InvalidRequest(format!("Failed to encode form data: {}", e)))?;
+            let content_type = HeaderValue::from_static("application/x-www-form-urlencoded");
+            request.header("Content-Type", content_type).body(encoded)
+        } else {
+            request
+        };
+
+        let response = request.send().await?;
+        let status = response.status();
+
+        // Handle different status codes
+        match status {
+            StatusCode::OK | StatusCode::CREATED => {
+                let data = response.json::<T>().await?;
+                Ok(data)
+            }
+            StatusCode::TOO_MANY_REQUESTS => Err(PayjpError::RateLimit),
+            StatusCode::UNAUTHORIZED => {
+                Err(PayjpError::Auth("Invalid public key".to_string()))
+            }
+            _ => {
+                // Try to parse error response
+                if let Ok(error_response) = response.json::<ErrorResponse>().await {
+                    Err(PayjpError::Api(error_response.error))
+                } else {
+                    Err(PayjpError::Api(crate::error::ApiError {
+                        status: status.as_u16(),
+                        error_type: "unknown_error".to_string(),
+                        message: format!("HTTP error: {}", status),
+                        code: None,
+                        param: None,
+                    }))
+                }
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

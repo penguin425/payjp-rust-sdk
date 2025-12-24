@@ -63,7 +63,27 @@ The included examples demonstrate creating tokens with raw card data for testing
 
 The easiest way to test the SDK is to use a pre-created token.
 
-**Method 1: Create token with HTML page (most compatible)**
+**Method 1: Create token with SDK and public key (recommended for SDK users)**
+
+Use the SDK's public key client to create tokens safely:
+
+```bash
+# Use your public key (pk_test_xxxxx) - NOT your secret key
+export PAYJP_PUBLIC_KEY="pk_test_xxxxx"
+cargo run --example create_token_public
+
+# The example will output a token ID. Use it with:
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # Token from the previous command
+cargo run --example charge_with_token
+```
+
+This method demonstrates the proper architecture where:
+- Clients use public keys to create tokens
+- Servers use secret keys to process payments with tokens
+- Card data never touches your server
+
+**Method 2: Create token with HTML page (most compatible)**
 
 If your PAY.JP account has strict security settings (returns `unsafe_credit_card_param` error), use the included HTML page:
 
