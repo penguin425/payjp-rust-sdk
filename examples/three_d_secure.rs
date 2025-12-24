@@ -1,15 +1,14 @@
 //! Example: 3D Secure authentication
 //!
-//! **IMPORTANT SECURITY NOTE:**
-//! This example creates tokens with raw card data for testing purposes only.
-//! If you receive an "unsafe_credit_card_param" error, enable "Allow unsafe card parameters"
-//! in your PAY.JP dashboard Test mode settings: https://pay.jp/d/settings
+//! This example demonstrates 3D Secure authentication using a pre-created token.
 //!
-//! In production, always use PAY.JP.js to create tokens client-side.
+//! To get a token for testing, run:
+//!   PAYJP_PUBLIC_KEY=pk_test_xxxxx PAYJP_PUBLIC_PASSWORD=password cargo run --example create_token_public
 //!
-//! Run with: cargo run --example three_d_secure
+//! Run with:
+//!   PAYJP_SECRET_KEY=sk_test_xxxxx PAYJP_TOKEN_ID=tok_xxxxx cargo run --example three_d_secure
 
-use payjp::{CardDetails, CreateThreeDSecureRequestParams, CreateTokenParams, PayjpClient};
+use payjp::{CreateThreeDSecureRequestParams, PayjpClient};
 use std::env;
 
 #[tokio::main]
@@ -17,27 +16,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = env::var("PAYJP_SECRET_KEY")
         .expect("PAYJP_SECRET_KEY environment variable not set");
 
+    let token_id = env::var("PAYJP_TOKEN_ID")
+        .expect("PAYJP_TOKEN_ID environment variable not set. Run create_token_public first to get a token.");
+
     let client = PayjpClient::new(api_key)?;
 
-    // Create a token
-    let card = CardDetails::new("4242424242424242", 12, 2030, "123")
-        .name("Ichiro Suzuki")
-        .email("suzuki@example.com");
-
-    println!("Creating token...");
-    let token = client
-        .tokens()
-        .create(CreateTokenParams::from_card(card))
-        .await?;
-
-    println!("✓ Token created: {}", token.id);
+    println!("Using token: {}", token_id);
 
     // Create a 3D Secure request for the token
     println!("\nCreating 3D Secure request...");
     let tds_request = client
         .three_d_secure_requests()
         .create(
-            CreateThreeDSecureRequestParams::new("token", &token.id)
+            CreateThreeDSecureRequestParams::new("token", &token_id)
                 .return_url("https://example.com/callback")
                 .state("custom_state_data"),
         )
