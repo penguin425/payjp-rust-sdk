@@ -34,8 +34,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create(
             CreateChargeParams::new(1000, "jpy")
                 .card(token_id)
-                .description("Test payment")
-                .metadata("order_id", "12345"),
+                .description("Test payment"),
         )
         .await?;
 
