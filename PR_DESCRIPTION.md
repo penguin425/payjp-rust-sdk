@@ -40,9 +40,11 @@ cargo run --example create_token_public
 - Proper separation of public/secret key usage
 - Card name validation fixes (romanized names)
 
-### 4. Form Encoding Fix
+### 4. Form Encoding and Deserialization Fixes
 - Fixed nested structure serialization with serde_urlencoded
 - Added `card[field]` format for PAY.JP API compatibility
+- Added `CardOrId` enum to handle expandable card fields
+- Properly deserialize card fields that can be either ID strings or full objects
 - Unit tests for form encoding
 
 ## Changes
@@ -63,7 +65,7 @@ cargo run --example create_token_public
 
 ### Statistics
 ```
-15 files changed, 958 insertions(+), 11 deletions(-)
+17 files changed, 1154 insertions(+), 91 deletions(-)
 ```
 
 ## Testing
@@ -71,7 +73,12 @@ cargo run --example create_token_public
 - ✅ All examples compile successfully
 - ✅ Public key authentication header verified (Base64 encoding matches curl)
 - ✅ Form encoding unit tests pass
-- ✅ Manual testing with actual credentials (network-limited environment)
+- ✅ Manual testing with actual PAY.JP credentials:
+  - ✅ `create_token_public` - Token creation with public key + password works
+  - ✅ `charge_with_token` - Charge creation with token works
+  - ✅ `create_customer` - Customer creation with token works (CardOrId enum handles card IDs correctly)
+  - ✅ `subscription` - Full subscription lifecycle works (create plan, customer, subscription, pause, resume, delete)
+  - ⚠️ `three_d_secure` - Requires special setup or 3DS-enabled test cards (not blocking for this PR)
 
 ## Architecture
 
@@ -112,6 +119,9 @@ This PR enables token creation for accounts with strict security settings that b
 ## Commit History
 
 ```
+8af1f4a Fix metadata serialization issue in examples
+c09a5b1 Fix metadata serialization issue in examples (earlier attempt)
+1a020e6 Add PR description template for GitHub PR creation
 45e06dd Add password parameter to PayjpPublicClient for authentication
 1358fa3 Add PayjpPublicClient for secure token creation with public keys
 8f8e23a Add browser-based token creation tool and update documentation
