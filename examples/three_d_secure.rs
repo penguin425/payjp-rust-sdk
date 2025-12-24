@@ -1,6 +1,7 @@
 //! Example: 3D Secure authentication
 //!
-//! This example demonstrates 3D Secure authentication using a pre-created token.
+//! This example demonstrates 3D Secure authentication for a customer's card.
+//! Note: 3D Secure requests require a card ID (car_xxxxx), not a token ID.
 //!
 //! To get a token for testing, run:
 //!   PAYJP_PUBLIC_KEY=pk_test_xxxxx PAYJP_PUBLIC_PASSWORD=password cargo run --example create_token_public
@@ -8,7 +9,7 @@
 //! Run with:
 //!   PAYJP_SECRET_KEY=sk_test_xxxxx PAYJP_TOKEN_ID=tok_xxxxx cargo run --example three_d_secure
 
-use payjp::{CreateThreeDSecureRequestParams, PayjpClient};
+use payjp::{CardOrId, CreateCustomerParams, CreateThreeDSecureRequestParams, PayjpClient};
 use std::env;
 
 #[tokio::main]
@@ -21,17 +22,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = PayjpClient::new(api_key)?;
 
-    println!("Using token: {}", token_id);
+    // Step 1: Create a customer with the token to get a card ID
+    println!("Creating customer with token: {}", token_id);
+    let customer = client
+        .customers()
+        .create(
+            CreateCustomerParams::new()
+                .email("tds-test@example.com")
+                .description("3D Secure Test Customer")
+                .card(token_id),
+        )
+        .await?;
 
-    // Create a 3D Secure request for the token
+    println!("✓ Customer created: {}", customer.id);
+
+    // Step 2: Extract the card ID from the customer
+    let card_id = match &customer.default_card {
+        Some(CardOrId::Id(id)) => id.clone(),
+        Some(CardOrId::Card(card)) => card.id.clone(),
+        None => {
+            return Err("Customer has no default card".into());
+        }
+    };
+
+    println!("  Card ID: {}", card_id);
+
+    // Step 3: Create a 3D Secure request for the card
     println!("\nCreating 3D Secure request...");
     let tds_request = client
         .three_d_secure_requests()
-        .create(
-            CreateThreeDSecureRequestParams::new("token", &token_id)
-                .return_url("https://example.com/callback")
-                .state("custom_state_data"),
-        )
+        .create(CreateThreeDSecureRequestParams::new(&card_id))
         .await?;
 
     println!("✓ 3D Secure request created!");
@@ -53,11 +73,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("✓ Status: {:?}", retrieved.status);
 
     // Note: In a real application, after the user completes 3D Secure authentication,
-    // you would call tds_finish on the token or charge to complete the process:
-    //
-    // let completed_token = client.tokens().tds_finish(&token.id).await?;
-    // or
-    // let completed_charge = client.charges().tds_finish(&charge.id).await?;
+    // you would retrieve the request again to check its status, then use the card
+    // for charges or subscriptions.
+
+    // Clean up: delete the test customer
+    println!("\n--- Cleaning up ---");
+    client.customers().delete(&customer.id).await?;
+    println!("✓ Customer deleted");
 
     Ok(())
 }
