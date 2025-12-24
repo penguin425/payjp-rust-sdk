@@ -232,7 +232,7 @@ impl<'a> PublicTokenService<'a> {
     /// ```no_run
     /// # use payjp::{PayjpPublicClient, CreateTokenParams, CardDetails};
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = PayjpPublicClient::new("pk_test_xxxxx")?;
+    /// let client = PayjpPublicClient::new("pk_test_xxxxx", "your_password")?;
     ///
     /// // Test card number
     /// let card = CardDetails::new("4242424242424242", 12, 2030, "123")

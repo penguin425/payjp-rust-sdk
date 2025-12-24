@@ -7,19 +7,22 @@
 //! - Follows PAY.JP security best practices
 //!
 //! Run with:
-//!   PAYJP_PUBLIC_KEY=pk_test_xxxxx cargo run --example create_token_public
+//!   PAYJP_PUBLIC_KEY=pk_test_xxxxx PAYJP_PUBLIC_PASSWORD=your_password cargo run --example create_token_public
 
 use payjp::{CardDetails, CreateTokenParams, PayjpPublicClient};
 use std::env;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Get public key from environment variable
+    // Get public key and password from environment variables
     let public_key = env::var("PAYJP_PUBLIC_KEY")
         .expect("PAYJP_PUBLIC_KEY environment variable not set. Use a public key like pk_test_xxxxx");
 
+    let password = env::var("PAYJP_PUBLIC_PASSWORD")
+        .expect("PAYJP_PUBLIC_PASSWORD environment variable not set");
+
     // Create a public client (for token creation only)
-    let client = PayjpPublicClient::new(public_key)?;
+    let client = PayjpPublicClient::new(public_key, password)?;
 
     println!("Creating token with public key...");
 

@@ -314,11 +314,12 @@ impl PayjpClient {
 
 /// The PAY.JP client for public key operations (token creation only).
 ///
-/// This client uses a public key (pk_test_ or pk_live_) and can only be used
+/// This client uses a public key (pk_test_ or pk_live_) with a password and can only be used
 /// to create tokens. Use `PayjpClient` with a secret key for other operations.
 #[derive(Debug, Clone)]
 pub struct PayjpPublicClient {
     public_key: String,
+    password: String,
     http_client: reqwest::Client,
     base_url: String,
     max_retry: u32,
@@ -327,21 +328,21 @@ pub struct PayjpPublicClient {
 }
 
 impl PayjpPublicClient {
-    /// Create a new PAY.JP public client with the given public key.
+    /// Create a new PAY.JP public client with the given public key and password.
     ///
     /// Public keys start with `pk_test_` (for test mode) or `pk_live_` (for live mode).
-    /// Leading and trailing whitespace in the public key will be automatically trimmed.
+    /// Leading and trailing whitespace in both the public key and password will be automatically trimmed.
     ///
     /// # Example
     ///
     /// ```no_run
     /// use payjp::PayjpPublicClient;
     ///
-    /// let client = PayjpPublicClient::new("pk_test_xxxxx")?;
+    /// let client = PayjpPublicClient::new("pk_test_xxxxx", "your_password")?;
     /// # Ok::<(), Box<dyn std::error::Error>>(())
     /// ```
-    pub fn new(public_key: impl Into<String>) -> PayjpResult<Self> {
-        Self::with_options(public_key, ClientOptions::default())
+    pub fn new(public_key: impl Into<String>, password: impl Into<String>) -> PayjpResult<Self> {
+        Self::with_options(public_key, password, ClientOptions::default())
     }
 
     /// Create a new PAY.JP public client with custom options.
@@ -356,16 +357,21 @@ impl PayjpPublicClient {
     ///     .timeout(Duration::from_secs(60))
     ///     .max_retry(5);
     ///
-    /// let client = PayjpPublicClient::with_options("pk_test_xxxxx", options)?;
+    /// let client = PayjpPublicClient::with_options("pk_test_xxxxx", "your_password", options)?;
     /// # Ok::<(), Box<dyn std::error::Error>>(())
     /// ```
-    pub fn with_options(public_key: impl Into<String>, options: ClientOptions) -> PayjpResult<Self> {
+    pub fn with_options(
+        public_key: impl Into<String>,
+        password: impl Into<String>,
+        options: ClientOptions,
+    ) -> PayjpResult<Self> {
         let http_client = reqwest::Client::builder()
             .timeout(options.timeout)
             .build()?;
 
         Ok(Self {
             public_key: public_key.into().trim().to_string(),
+            password: password.into().trim().to_string(),
             http_client,
             base_url: options.base_url,
             max_retry: options.max_retry,
@@ -438,9 +444,8 @@ impl PayjpPublicClient {
     ) -> PayjpResult<T> {
         let url = format!("{}{}", self.base_url, path);
 
-        // Create basic auth header with public key
-        // Public key is used as username, password is empty
-        let auth = format!("{}:", self.public_key);
+        // Create basic auth header with public key and password
+        let auth = format!("{}:{}", self.public_key, self.password);
         let encoded = general_purpose::STANDARD.encode(auth.as_bytes());
         let auth_header_str = format!("Basic {}", encoded);
 

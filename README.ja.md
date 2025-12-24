@@ -68,8 +68,9 @@ SDKをテストする最も簡単な方法は、事前に作成されたトー�
 SDKの公開可能キークライアントを使って安全にトークンを作成：
 
 ```bash
-# 公開可能キー（pk_test_xxxxx）を使用 - シークレットキーではありません
+# 公開可能キーとパスワード（pk_test_xxxxx:password）を使用
 export PAYJP_PUBLIC_KEY="pk_test_xxxxx"
+export PAYJP_PUBLIC_PASSWORD="your_password"
 cargo run --example create_token_public
 
 # サンプルがトークンIDを出力します。それを使用：
@@ -79,7 +80,7 @@ cargo run --example charge_with_token
 ```
 
 この方法は、適切なアーキテクチャを示しています：
-- クライアントは公開可能キーを使ってトークンを作成
+- クライアントは公開可能キー（とパスワード）を使ってトークンを作成
 - サーバーはシークレットキーを使ってトークンで決済を処理
 - カードデータは決してサーバーに送信されない
 

@@ -68,8 +68,9 @@ The easiest way to test the SDK is to use a pre-created token.
 Use the SDK's public key client to create tokens safely:
 
 ```bash
-# Use your public key (pk_test_xxxxx) - NOT your secret key
+# Use your public key and password (pk_test_xxxxx:password)
 export PAYJP_PUBLIC_KEY="pk_test_xxxxx"
+export PAYJP_PUBLIC_PASSWORD="your_password"
 cargo run --example create_token_public
 
 # The example will output a token ID. Use it with:
@@ -79,7 +80,7 @@ cargo run --example charge_with_token
 ```
 
 This method demonstrates the proper architecture where:
-- Clients use public keys to create tokens
+- Clients use public keys (with password) to create tokens
 - Servers use secret keys to process payments with tokens
 - Card data never touches your server
 
