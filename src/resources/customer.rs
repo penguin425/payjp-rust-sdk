@@ -7,6 +7,19 @@ use crate::resources::card::{Card, CardService};
 use crate::response::ListResponse;
 use serde::{Deserialize, Serialize};
 
+/// Represents either a Card object or a card ID string.
+///
+/// PAY.JP API returns card IDs by default, but can return full Card objects
+/// when using the `expand` parameter.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum CardOrId {
+    /// Full Card object (when expanded).
+    Card(Card),
+    /// Card ID string.
+    Id(String),
+}
+
 /// A customer represents a buyer who can be charged multiple times.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Customer {
@@ -23,8 +36,9 @@ pub struct Customer {
     pub created: i64,
 
     /// Customer's default card (optional).
+    /// Can be either a card ID string or a full Card object if expanded.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub default_card: Option<Card>,
+    pub default_card: Option<CardOrId>,
 
     /// Customer's email address (optional).
     #[serde(skip_serializing_if = "Option::is_none")]

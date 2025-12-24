@@ -46,10 +46,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     if let Some(default_card) = &customer.default_card {
-        println!(
-            "  Default card: {} ending in {}",
-            default_card.brand, default_card.last4
-        );
+        match default_card {
+            payjp::CardOrId::Card(card) => {
+                println!(
+                    "  Default card: {} ending in {}",
+                    card.brand, card.last4
+                );
+            }
+            payjp::CardOrId::Id(card_id) => {
+                println!("  Default card ID: {}", card_id);
+            }
+        }
     }
 
     Ok(())

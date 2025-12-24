@@ -22,7 +22,7 @@ pub use charge::{
     CaptureParams, Charge, ChargeService, CreateChargeParams, ListChargeParams, ReauthParams,
     RefundParams, UpdateChargeParams,
 };
-pub use customer::{CreateCustomerParams, Customer, CustomerService, UpdateCustomerParams};
+pub use customer::{CardOrId, CreateCustomerParams, Customer, CustomerService, UpdateCustomerParams};
 pub use plan::{CreatePlanParams, Plan, PlanInterval, PlanService, UpdatePlanParams};
 pub use subscription::{
     CancelSubscriptionParams, CreateSubscriptionParams, PauseSubscriptionParams,
