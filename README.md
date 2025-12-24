@@ -63,7 +63,22 @@ The included examples demonstrate creating tokens with raw card data for testing
 
 The easiest way to test the SDK is to use a pre-created token.
 
-**Method 1: Create token with script (easiest)**
+**Method 1: Create token with HTML page (most compatible)**
+
+If your PAY.JP account has strict security settings (returns `unsafe_credit_card_param` error), use the included HTML page:
+
+```bash
+# 1. Open create_token.html in your web browser
+# 2. Enter your public key (pk_test_xxxxx)
+# 3. Click "トークンを作成" to create a token
+# 4. Copy the displayed token ID and run:
+
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # Use the token from the HTML page
+cargo run --example charge_with_token
+```
+
+**Method 2: Create token with script**
 
 ```bash
 # 1. Set your API key
@@ -77,7 +92,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"  # Use the token from script output
 cargo run --example charge_with_token
 ```
 
-**Method 2: Create token with curl**
+**Method 3: Create token with curl**
 
 ```bash
 curl -X POST https://api.pay.jp/v1/tokens \
@@ -92,6 +107,8 @@ export PAYJP_TOKEN_ID="tok_xxxxx"
 cargo run --example charge_with_token
 ```
 
+**Note**: Methods 2 and 3 may fail with `unsafe_credit_card_param` error if your account has strict security settings. In that case, use Method 1 (HTML page).
+
 **Alternative: Enable unsafe card parameters (if available)**
 
 Some examples create tokens with raw card data. These may fail with an `unsafe_credit_card_param` error. If your PAY.JP dashboard has this option:
@@ -100,7 +117,7 @@ Some examples create tokens with raw card data. These may fail with an `unsafe_c
 2. Under "Test mode settings", enable "Allow unsafe card parameters"
 3. Run examples like: `cargo run --example create_charge`
 
-**Note**: Not all PAY.JP accounts have this setting available. If you cannot find it, use the token-based example above.
+**Note**: Not all PAY.JP accounts have this setting available. If you cannot find it, use the HTML page method above.
 
 For production code, always refer to the [PAY.JP.js documentation](https://pay.jp/docs/payjs) for client-side token creation.
 

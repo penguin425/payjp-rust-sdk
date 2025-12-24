@@ -63,7 +63,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 SDKをテストする最も簡単な方法は、事前に作成されたトークンを使用することです。
 
-**方法1: スクリプトでトークンを作成（最も簡単）**
+**方法1: HTMLページでトークンを作成（最も互換性が高い）**
+
+PAY.JPアカウントで厳格なセキュリティ設定が有効な場合（`unsafe_credit_card_param`エラーが返される場合）、付属のHTMLページを使用してください：
+
+```bash
+# 1. create_token.html をウェブブラウザで開く
+# 2. 公開可能キー（pk_test_xxxxx）を入力
+# 3. 「トークンを作成」をクリックしてトークンを作成
+# 4. 表示されたトークンIDをコピーして実行：
+
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # HTMLページで作成したトークンを使用
+cargo run --example charge_with_token
+```
+
+**方法2: スクリプトでトークンを作成**
 
 ```bash
 # 1. APIキーを設定
@@ -77,7 +92,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"  # スクリプト出力のトークンを使�
 cargo run --example charge_with_token
 ```
 
-**方法2: curlでトークンを作成**
+**方法3: curlでトークンを作成**
 
 ```bash
 curl -X POST https://api.pay.jp/v1/tokens \
@@ -92,6 +107,8 @@ export PAYJP_TOKEN_ID="tok_xxxxx"
 cargo run --example charge_with_token
 ```
 
+**注意**: 方法2と方法3は、アカウントで厳格なセキュリティ設定が有効な場合、`unsafe_credit_card_param`エラーで失敗する可能性があります。その場合は、方法1（HTMLページ）を使用してください。
+
 **代替案：安全でないカードパラメータを許可する（利用可能な場合）**
 
 一部のサンプルは生のカードデータでトークンを作成します。これらは`unsafe_credit_card_param`エラーで失敗する可能性があります。PAY.JPダッシュボードにこのオプションがある場合：
@@ -100,7 +117,7 @@ cargo run --example charge_with_token
 2. 「テストモード設定」で「安全でないカードパラメータを許可する」を有効にしてください
 3. 次のようにサンプルを実行： `cargo run --example create_charge`
 
-**注意**: すべてのPAY.JPアカウントにこの設定があるわけではありません。見つからない場合は、上記のトークンベースのサンプルを使用してください。
+**注意**: すべてのPAY.JPアカウントにこの設定があるわけではありません。見つからない場合は、上記のHTMLページ方式を使用してください。
 
 本番コードについては、クライアント側でのトークン作成方法について[PAY.JP.jsドキュメント](https://pay.jp/docs/payjs)を参照してください。
 
