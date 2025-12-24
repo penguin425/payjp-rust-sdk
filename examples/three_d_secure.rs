@@ -56,9 +56,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("✓ 3D Secure request created!");
     println!("  ID: {}", tds_request.id);
-    println!("  Resource type: {:?}", tds_request.resource_type);
-    println!("  Resource ID: {:?}", tds_request.resource_id);
-    println!("  Status: {:?}", tds_request.status);
+
+    if let Some(resource_id) = &tds_request.resource_id {
+        println!("  Card ID: {}", resource_id);
+    }
 
     if let Some(auth_url) = &tds_request.authentication_url {
         println!("  Authentication URL: {}", auth_url);
@@ -72,7 +73,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .retrieve(&tds_request.id)
         .await?;
 
-    println!("✓ Status: {:?}", retrieved.status);
+    println!("✓ Retrieved request: {}", retrieved.id);
 
     // Note: In a real application, after the user completes 3D Secure authentication,
     // you would retrieve the request again to check its status, then use the card

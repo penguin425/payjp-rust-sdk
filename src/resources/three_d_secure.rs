@@ -21,15 +21,18 @@ pub struct ThreeDSecureRequest {
     /// Request creation timestamp (Unix timestamp).
     pub created: i64,
 
-    /// Resource type being authenticated ("card" or "charge").
+    /// Resource type being authenticated ("card" or "charge", optional).
+    /// Note: The PAY.JP API may not always return this field.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub resource_type: Option<String>,
 
-    /// Resource ID (card or charge ID).
+    /// Resource ID (card or charge ID, optional).
+    /// This field contains the card ID when the request is created.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub resource_id: Option<String>,
 
-    /// 3DS authentication status.
+    /// 3DS authentication status (optional).
+    /// Note: The PAY.JP API may not return this field immediately after creation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<ThreeDSecureStatus>,
 
