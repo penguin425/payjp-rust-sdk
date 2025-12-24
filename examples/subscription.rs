@@ -29,8 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create(
             CreatePlanParams::new(980, "jpy", PlanInterval::Month)
                 .name("Monthly Plan")
-                .trial_days(7)
-                .metadata("plan_type", "basic"),
+                .trial_days(7),
         )
         .await?;
 
@@ -68,8 +67,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let subscription = client
         .subscriptions()
         .create(
-            CreateSubscriptionParams::new(&customer.id, &plan.id)
-                .metadata("subscription_type", "premium"),
+            CreateSubscriptionParams::new(&customer.id, &plan.id),
         )
         .await?;
 
