@@ -99,7 +99,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"  # HTMLページで作成したトークンを
 cargo run --example charge_with_token
 ```
 
-**方法2: スクリプトでトークンを作成**
+**方法3: スクリプトでトークンを作成**
 
 ```bash
 # 1. APIキーを設定
@@ -113,7 +113,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"  # スクリプト出力のトークンを使�
 cargo run --example charge_with_token
 ```
 
-**方法3: curlでトークンを作成**
+**方法4: curlでトークンを作成**
 
 ```bash
 curl -X POST https://api.pay.jp/v1/tokens \
@@ -128,7 +128,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"
 cargo run --example charge_with_token
 ```
 
-**注意**: 方法2と方法3は、アカウントで厳格なセキュリティ設定が有効な場合、`unsafe_credit_card_param`エラーで失敗する可能性があります。その場合は、方法1（HTMLページ）を使用してください。
+**注意**: 方法3と方法4は、アカウントで厳格なセキュリティ設定が有効な場合、`unsafe_credit_card_param`エラーで失敗する可能性があります。その場合は、方法1（SDKと公開可能キー）または方法2（HTMLページ）を使用してください。
 
 **代替案：安全でないカードパラメータを許可する（利用可能な場合）**
 
@@ -271,18 +271,32 @@ for charge in charges.data {
 ### 3Dセキュア認証
 
 ```rust
-use payjp::CreateThreeDSecureRequestParams;
+use payjp::{CreateThreeDSecureRequestParams, CreateCustomerParams, CardOrId};
 
-// トークンに対する3DSリクエストを作成
-let tds_request = client.three_d_secure_requests().create(
-    CreateThreeDSecureRequestParams::new("token", &token.id)
-        .return_url("https://example.com/callback")
+// まず、トークンを使って顧客を作成し、カードIDを取得
+let customer = client.customers().create(
+    CreateCustomerParams::new()
+        .email("customer@example.com")
+        .card("tok_xxxxx")
 ).await?;
 
-// ユーザーが認証を完了...
+// 顧客からカードIDを抽出
+let card_id = match &customer.default_card {
+    Some(CardOrId::Id(id)) => id,
+    Some(CardOrId::Card(card)) => &card.id,
+    None => return Err("カードが見つかりません".into()),
+};
 
-// 3DS認証を完了
-let completed_token = client.tokens().tds_finish(&token.id).await?;
+// カードに対する3DSリクエストを作成
+let tds_request = client.three_d_secure_requests().create(
+    CreateThreeDSecureRequestParams::new(card_id)
+).await?;
+
+// authentication_urlがある場合、ユーザーを認証完了のためにリダイレクト
+if let Some(auth_url) = &tds_request.authentication_url {
+    println!("ユーザーをリダイレクト: {}", auth_url);
+    // ユーザーが認証を完了した後、リクエストのステータスを確認
+}
 ```
 
 ### プラットフォームAPI - テナントの管理

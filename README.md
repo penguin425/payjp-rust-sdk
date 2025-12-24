@@ -99,7 +99,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"  # Use the token from the HTML page
 cargo run --example charge_with_token
 ```
 
-**Method 2: Create token with script**
+**Method 3: Create token with script**
 
 ```bash
 # 1. Set your API key
@@ -113,7 +113,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"  # Use the token from script output
 cargo run --example charge_with_token
 ```
 
-**Method 3: Create token with curl**
+**Method 4: Create token with curl**
 
 ```bash
 curl -X POST https://api.pay.jp/v1/tokens \
@@ -128,7 +128,7 @@ export PAYJP_TOKEN_ID="tok_xxxxx"
 cargo run --example charge_with_token
 ```
 
-**Note**: Methods 2 and 3 may fail with `unsafe_credit_card_param` error if your account has strict security settings. In that case, use Method 1 (HTML page).
+**Note**: Methods 3 and 4 may fail with `unsafe_credit_card_param` error if your account has strict security settings. In that case, use Method 1 (SDK with public key) or Method 2 (HTML page).
 
 **Alternative: Enable unsafe card parameters (if available)**
 
@@ -271,18 +271,32 @@ for charge in charges.data {
 ### 3D Secure Authentication
 
 ```rust
-use payjp::CreateThreeDSecureRequestParams;
+use payjp::{CreateThreeDSecureRequestParams, CreateCustomerParams, CardOrId};
 
-// Create a 3DS request for a token
-let tds_request = client.three_d_secure_requests().create(
-    CreateThreeDSecureRequestParams::new("token", &token.id)
-        .return_url("https://example.com/callback")
+// First, create a customer with a token to get a card ID
+let customer = client.customers().create(
+    CreateCustomerParams::new()
+        .email("customer@example.com")
+        .card("tok_xxxxx")
 ).await?;
 
-// User completes authentication...
+// Extract the card ID from the customer
+let card_id = match &customer.default_card {
+    Some(CardOrId::Id(id)) => id,
+    Some(CardOrId::Card(card)) => &card.id,
+    None => return Err("No card found".into()),
+};
 
-// Finish 3DS authentication
-let completed_token = client.tokens().tds_finish(&token.id).await?;
+// Create a 3DS request for the card
+let tds_request = client.three_d_secure_requests().create(
+    CreateThreeDSecureRequestParams::new(card_id)
+).await?;
+
+// If authentication_url is present, redirect user to complete authentication
+if let Some(auth_url) = &tds_request.authentication_url {
+    println!("Redirect user to: {}", auth_url);
+    // After user completes authentication, check the request status
+}
 ```
 
 ### Platform API - Managing Tenants
