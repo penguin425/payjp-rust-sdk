@@ -61,13 +61,33 @@ The included examples demonstrate creating tokens with raw card data for testing
 
 **✅ Recommended: Use the token-based example**
 
-The easiest way to test the SDK is to use a pre-created token:
+The easiest way to test the SDK is to use a pre-created token.
+
+**Method 1: Create token with script (easiest)**
 
 ```bash
-# 1. Get a test token from PAY.JP dashboard:
-#    https://pay.jp/d/test/tokens
-# 2. Run the example with your token:
+# 1. Set your API key
 export PAYJP_SECRET_KEY="sk_test_xxxxx"
+
+# 2. Run the token creation script
+./create_test_token.sh
+
+# 3. The script will output a token ID. Copy it and run:
+export PAYJP_TOKEN_ID="tok_xxxxx"  # Use the token from script output
+cargo run --example charge_with_token
+```
+
+**Method 2: Create token with curl**
+
+```bash
+curl -X POST https://api.pay.jp/v1/tokens \
+  -u "sk_test_xxxxx:" \
+  -d "card[number]=4242424242424242" \
+  -d "card[exp_month]=12" \
+  -d "card[exp_year]=2030" \
+  -d "card[cvc]=123"
+
+# Copy the token ID from the response and use it:
 export PAYJP_TOKEN_ID="tok_xxxxx"
 cargo run --example charge_with_token
 ```

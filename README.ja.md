@@ -61,13 +61,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 **✅ 推奨：トークンベースのサンプルを使用**
 
-SDKをテストする最も簡単な方法は、事前に作成されたトークンを使用することです：
+SDKをテストする最も簡単な方法は、事前に作成されたトークンを使用することです。
+
+**方法1: スクリプトでトークンを作成（最も簡単）**
 
 ```bash
-# 1. PAY.JPダッシュボードからテストトークンを取得：
-#    https://pay.jp/d/test/tokens
-# 2. トークンを使用してサンプルを実行：
+# 1. APIキーを設定
 export PAYJP_SECRET_KEY="sk_test_xxxxx"
+
+# 2. トークン作成スクリプトを実行
+./create_test_token.sh
+
+# 3. スクリプトの出力からトークンIDをコピーして実行：
+export PAYJP_TOKEN_ID="tok_xxxxx"  # スクリプト出力のトークンを使用
+cargo run --example charge_with_token
+```
+
+**方法2: curlでトークンを作成**
+
+```bash
+curl -X POST https://api.pay.jp/v1/tokens \
+  -u "sk_test_xxxxx:" \
+  -d "card[number]=4242424242424242" \
+  -d "card[exp_month]=12" \
+  -d "card[exp_year]=2030" \
+  -d "card[cvc]=123"
+
+# レスポンスからトークンIDをコピーして使用：
 export PAYJP_TOKEN_ID="tok_xxxxx"
 cargo run --example charge_with_token
 ```
