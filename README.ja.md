@@ -59,11 +59,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ### サンプルコードの実行
 
-サンプルコードは`unsafe_credit_card_param`エラーで失敗する可能性があります。実行するには：
+**✅ 推奨：トークンベースのサンプルを使用**
 
-1. PAY.JPダッシュボードにアクセス： https://pay.jp/d/settings
+SDKをテストする最も簡単な方法は、事前に作成されたトークンを使用することです：
+
+```bash
+# 1. PAY.JPダッシュボードからテストトークンを取得：
+#    https://pay.jp/d/test/tokens
+# 2. トークンを使用してサンプルを実行：
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"
+cargo run --example charge_with_token
+```
+
+**代替案：安全でないカードパラメータを許可する（利用可能な場合）**
+
+一部のサンプルは生のカードデータでトークンを作成します。これらは`unsafe_credit_card_param`エラーで失敗する可能性があります。PAY.JPダッシュボードにこのオプションがある場合：
+
+1. https://pay.jp/d/settings にアクセス
 2. 「テストモード設定」で「安全でないカードパラメータを許可する」を有効にしてください
-3. **重要**: この設定はテストモードのみに影響し、テスト目的でのみ使用してください
+3. 次のようにサンプルを実行： `cargo run --example create_charge`
+
+**注意**: すべてのPAY.JPアカウントにこの設定があるわけではありません。見つからない場合は、上記のトークンベースのサンプルを使用してください。
 
 本番コードについては、クライアント側でのトークン作成方法について[PAY.JP.jsドキュメント](https://pay.jp/docs/payjs)を参照してください。
 

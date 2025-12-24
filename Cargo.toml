@@ -46,3 +46,7 @@ path = "examples/subscription.rs"
 [[example]]
 name = "three_d_secure"
 path = "examples/three_d_secure.rs"
+
+[[example]]
+name = "charge_with_token"
+path = "examples/charge_with_token.rs"

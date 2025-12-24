@@ -59,13 +59,30 @@ The included examples demonstrate creating tokens with raw card data for testing
 
 ### Running Examples
 
-The examples may fail with an `unsafe_credit_card_param` error. To run them:
+**✅ Recommended: Use the token-based example**
 
-1. Go to your PAY.JP dashboard: https://pay.jp/d/settings
+The easiest way to test the SDK is to use a pre-created token:
+
+```bash
+# 1. Get a test token from PAY.JP dashboard:
+#    https://pay.jp/d/test/tokens
+# 2. Run the example with your token:
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"
+cargo run --example charge_with_token
+```
+
+**Alternative: Enable unsafe card parameters (if available)**
+
+Some examples create tokens with raw card data. These may fail with an `unsafe_credit_card_param` error. If your PAY.JP dashboard has this option:
+
+1. Go to: https://pay.jp/d/settings
 2. Under "Test mode settings", enable "Allow unsafe card parameters"
-3. **Important**: This setting only affects test mode and should only be used for testing
+3. Run examples like: `cargo run --example create_charge`
 
-For production code, refer to the [PAY.JP.js documentation](https://pay.jp/docs/payjs) for client-side token creation.
+**Note**: Not all PAY.JP accounts have this setting available. If you cannot find it, use the token-based example above.
+
+For production code, always refer to the [PAY.JP.js documentation](https://pay.jp/docs/payjs) for client-side token creation.
 
 ## Supported Resources
 
