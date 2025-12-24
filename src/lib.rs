@@ -69,7 +69,7 @@ pub use response::ListResponse;
 // Re-export resource types
 pub use resources::{
     Account, AccountService, Balance, BalanceService, CancelSubscriptionParams, CaptureParams,
-    Card, CardDetails, CardService, CardThreeDSecureStatus, Charge, ChargeService,
+    Card, CardDetails, CardOrId, CardService, CardThreeDSecureStatus, Charge, ChargeService,
     CreateCardParams, CreateChargeParams, CreateCustomerParams, CreatePlanParams,
     CreateSubscriptionParams, CreateThreeDSecureRequestParams, CreateTokenParams, Customer,
     CustomerService, Event, EventData, EventService, EventType, ListChargeParams,
