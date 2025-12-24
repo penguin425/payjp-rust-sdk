@@ -47,6 +47,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
+## ⚠️ Important Security Note
+
+**Never send raw card data directly to your server or API in production.**
+
+The included examples demonstrate creating tokens with raw card data for testing purposes only. In production environments:
+
+1. **Always use PAY.JP.js** (or payjp-ios/payjp-android) to create tokens on the client side
+2. Only send the resulting token to your server
+3. Use the token to create charges, customers, or subscriptions
+
+### Running Examples
+
+The examples may fail with an `unsafe_credit_card_param` error. To run them:
+
+1. Go to your PAY.JP dashboard: https://pay.jp/d/settings
+2. Under "Test mode settings", enable "Allow unsafe card parameters"
+3. **Important**: This setting only affects test mode and should only be used for testing
+
+For production code, refer to the [PAY.JP.js documentation](https://pay.jp/docs/payjs) for client-side token creation.
+
 ## Supported Resources
 
 ### Core Resources
