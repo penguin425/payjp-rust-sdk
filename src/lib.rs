@@ -61,7 +61,7 @@ pub mod resources;
 pub mod response;
 
 // Re-export main types
-pub use client::{ClientOptions, PayjpClient, DEFAULT_BASE_URL};
+pub use client::{ClientOptions, PayjpClient, PayjpPublicClient, DEFAULT_BASE_URL};
 pub use error::{ApiError, CardError, PayjpError, PayjpResult};
 pub use params::{ListParams, Metadata};
 pub use response::ListResponse;
@@ -76,7 +76,7 @@ pub use resources::{
     PauseSubscriptionParams, Plan, PlanInterval, PlanService, ReauthParams, RefundParams,
     ResumeSubscriptionParams, Statement, StatementService, Subscription, SubscriptionService,
     SubscriptionStatus, Term, TermService, ThreeDSecureRequest, ThreeDSecureRequestService,
-    ThreeDSecureStatus, Token, TokenService, Transfer, TransferService, UpdateCardParams,
+    ThreeDSecureStatus, Token, TokenService, PublicTokenService, Transfer, TransferService, UpdateCardParams,
     UpdateChargeParams, UpdateCustomerParams, UpdatePlanParams, UpdateSubscriptionParams,
 };
 
@@ -329,5 +329,34 @@ impl PayjpClient {
     /// ```
     pub fn tenant_transfers(&self) -> resources::platform::TenantTransferService<'_> {
         resources::platform::TenantTransferService::new(self)
+    }
+}
+
+// Add service accessor methods to PayjpPublicClient
+impl PayjpPublicClient {
+    /// Access the tokens service (public key).
+    ///
+    /// This is the only service available with a public key. Use this to create
+    /// tokens client-side without sending raw card data to your server.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// # use payjp::{PayjpPublicClient, CreateTokenParams, CardDetails};
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// let client = PayjpPublicClient::new("pk_test_xxxxx", "your_password")?;
+    ///
+    /// let card = CardDetails::new("4242424242424242", 12, 2030, "123");
+    /// let token = client.tokens().create(
+    ///     CreateTokenParams::from_card(card)
+    /// ).await?;
+    ///
+    /// // Send token.id to your server
+    /// println!("Token ID: {}", token.id);
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn tokens(&self) -> resources::token::PublicTokenService<'_> {
+        resources::token::PublicTokenService::new(self)
     }
 }

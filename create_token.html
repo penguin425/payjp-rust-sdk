@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAY.JP Test Token Creator</title>
+    <script src="https://js.pay.jp/v2/pay.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            display: none;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .token-id {
+            font-family: monospace;
+            font-size: 14px;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+        .instructions {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .code {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔐 PAY.JP Test Token Creator</h1>
+        <p>このページでテストトークンを作成して、Rust SDKのサンプルで使用できます。</p>
+
+        <div class="form-group">
+            <label for="publicKey">公開可能キー (pk_test_xxxxx)</label>
+            <input type="text" id="publicKey" placeholder="pk_test_xxxxxxxxxxxxx" required>
+        </div>
+
+        <div class="form-group">
+            <label for="cardNumber">カード番号</label>
+            <input type="text" id="cardNumber" value="4242424242424242" maxlength="16" required>
+        </div>
+
+        <div class="form-group">
+            <label for="cardExpiry">有効期限 (MM/YY)</label>
+            <input type="text" id="cardExpiry" value="12/30" placeholder="12/30" maxlength="5" required>
+        </div>
+
+        <div class="form-group">
+            <label for="cardCvc">CVC</label>
+            <input type="text" id="cardCvc" value="123" maxlength="4" required>
+        </div>
+
+        <div class="form-group">
+            <label for="cardName">カード名義（英数字のみ）</label>
+            <input type="text" id="cardName" value="Test User" placeholder="Test User">
+        </div>
+
+        <button id="createToken" onclick="createToken()">トークンを作成</button>
+
+        <div id="result" class="result"></div>
+
+        <div class="instructions">
+            <strong>📝 使い方：</strong>
+            <ol>
+                <li>公開可能キー（pk_test_xxxxx）を入力</li>
+                <li>「トークンを作成」をクリック</li>
+                <li>表示されたトークンIDをコピー</li>
+                <li>ターミナルで以下を実行：</li>
+            </ol>
+            <div class="code">
+export PAYJP_SECRET_KEY="sk_test_xxxxx"<br>
+export PAYJP_TOKEN_ID="tok_xxxxx"<br>
+cargo run --example charge_with_token
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let payjp = null;
+
+        // Initialize PAY.JP when public key is entered
+        document.getElementById('publicKey').addEventListener('blur', function() {
+            const publicKey = this.value.trim();
+            if (publicKey.startsWith('pk_test_')) {
+                try {
+                    payjp = Payjp(publicKey);
+                    console.log('PAY.JP initialized with key:', publicKey);
+                } catch (e) {
+                    showError('公開可能キーの初期化に失敗しました: ' + e.message);
+                }
+            }
+        });
+
+        function createToken() {
+            const publicKey = document.getElementById('publicKey').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardExpiry = document.getElementById('cardExpiry').value;
+            const cardCvc = document.getElementById('cardCvc').value;
+            const cardName = document.getElementById('cardName').value.trim();
+
+            // Validate public key
+            if (!publicKey || !publicKey.startsWith('pk_test_')) {
+                showError('公開可能キー（pk_test_xxxxx）を入力してください');
+                return;
+            }
+
+            // Initialize PAY.JP if not already done
+            if (!payjp) {
+                try {
+                    payjp = Payjp(publicKey);
+                } catch (e) {
+                    showError('公開可能キーの初期化に失敗しました: ' + e.message);
+                    return;
+                }
+            }
+
+            // Parse expiry
+            const expiryParts = cardExpiry.split('/');
+            if (expiryParts.length !== 2) {
+                showError('有効期限はMM/YY形式で入力してください（例: 12/30）');
+                return;
+            }
+
+            const expMonth = expiryParts[0].trim();
+            const expYear = '20' + expiryParts[1].trim();
+
+            // Disable button
+            const button = document.getElementById('createToken');
+            button.disabled = true;
+            button.textContent = '作成中...';
+
+            // Create card object
+            const card = {
+                number: cardNumber,
+                exp_month: expMonth,
+                exp_year: expYear,
+                cvc: cardCvc
+            };
+
+            if (cardName) {
+                card.name = cardName;
+            }
+
+            // Create token
+            payjp.createToken(card).then(function(response) {
+                if (response.error) {
+                    showError('エラー: ' + response.error.message);
+                } else {
+                    showSuccess(response.id);
+                }
+            }).catch(function(error) {
+                showError('トークン作成エラー: ' + error.message);
+            }).finally(function() {
+                button.disabled = false;
+                button.textContent = 'トークンを作成';
+            });
+        }
+
+        function showSuccess(tokenId) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <strong>✅ トークンが作成されました！</strong>
+                <div class="token-id"><strong>Token ID:</strong><br>${tokenId}</div>
+                <p style="margin-top: 15px;">以下のコマンドでサンプルを実行できます：</p>
+                <div class="code">
+export PAYJP_TOKEN_ID="${tokenId}"<br>
+cargo run --example charge_with_token
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result error';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `<strong>❌ エラー</strong><br>${message}`;
+        }
+
+        // Allow pressing Enter to create token
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                createToken();
+            }
+        });
+    </script>
+</body>
+</html>

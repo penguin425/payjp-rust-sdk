@@ -59,13 +59,88 @@ The included examples demonstrate creating tokens with raw card data for testing
 
 ### Running Examples
 
-The examples may fail with an `unsafe_credit_card_param` error. To run them:
+**✅ Recommended: Use the token-based example**
 
-1. Go to your PAY.JP dashboard: https://pay.jp/d/settings
+The easiest way to test the SDK is to use a pre-created token.
+
+**Method 1: Create token with SDK and public key (recommended for SDK users)**
+
+Use the SDK's public key client to create tokens safely:
+
+```bash
+# Use your public key and password (pk_test_xxxxx:password)
+export PAYJP_PUBLIC_KEY="pk_test_xxxxx"
+export PAYJP_PUBLIC_PASSWORD="your_password"
+cargo run --example create_token_public
+
+# The example will output a token ID. Use it with:
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # Token from the previous command
+cargo run --example charge_with_token
+```
+
+This method demonstrates the proper architecture where:
+- Clients use public keys (with password) to create tokens
+- Servers use secret keys to process payments with tokens
+- Card data never touches your server
+
+**Method 2: Create token with HTML page (most compatible)**
+
+If your PAY.JP account has strict security settings (returns `unsafe_credit_card_param` error), use the included HTML page:
+
+```bash
+# 1. Open create_token.html in your web browser
+# 2. Enter your public key (pk_test_xxxxx)
+# 3. Click "トークンを作成" to create a token
+# 4. Copy the displayed token ID and run:
+
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # Use the token from the HTML page
+cargo run --example charge_with_token
+```
+
+**Method 2: Create token with script**
+
+```bash
+# 1. Set your API key
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+
+# 2. Run the token creation script
+./create_test_token.sh
+
+# 3. The script will output a token ID. Copy it and run:
+export PAYJP_TOKEN_ID="tok_xxxxx"  # Use the token from script output
+cargo run --example charge_with_token
+```
+
+**Method 3: Create token with curl**
+
+```bash
+curl -X POST https://api.pay.jp/v1/tokens \
+  -u "sk_test_xxxxx:" \
+  -d "card[number]=4242424242424242" \
+  -d "card[exp_month]=12" \
+  -d "card[exp_year]=2030" \
+  -d "card[cvc]=123"
+
+# Copy the token ID from the response and use it:
+export PAYJP_TOKEN_ID="tok_xxxxx"
+cargo run --example charge_with_token
+```
+
+**Note**: Methods 2 and 3 may fail with `unsafe_credit_card_param` error if your account has strict security settings. In that case, use Method 1 (HTML page).
+
+**Alternative: Enable unsafe card parameters (if available)**
+
+Some examples create tokens with raw card data. These may fail with an `unsafe_credit_card_param` error. If your PAY.JP dashboard has this option:
+
+1. Go to: https://pay.jp/d/settings
 2. Under "Test mode settings", enable "Allow unsafe card parameters"
-3. **Important**: This setting only affects test mode and should only be used for testing
+3. Run examples like: `cargo run --example create_charge`
 
-For production code, refer to the [PAY.JP.js documentation](https://pay.jp/docs/payjs) for client-side token creation.
+**Note**: Not all PAY.JP accounts have this setting available. If you cannot find it, use the HTML page method above.
+
+For production code, always refer to the [PAY.JP.js documentation](https://pay.jp/docs/payjs) for client-side token creation.
 
 ## Supported Resources
 

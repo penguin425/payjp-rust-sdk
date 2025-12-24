@@ -59,11 +59,86 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ### サンプルコードの実行
 
-サンプルコードは`unsafe_credit_card_param`エラーで失敗する可能性があります。実行するには：
+**✅ 推奨：トークンベースのサンプルを使用**
 
-1. PAY.JPダッシュボードにアクセス： https://pay.jp/d/settings
+SDKをテストする最も簡単な方法は、事前に作成されたトークンを使用することです。
+
+**方法1: SDKと公開可能キーでトークンを作成（SDK利用者に推奨）**
+
+SDKの公開可能キークライアントを使って安全にトークンを作成：
+
+```bash
+# 公開可能キーとパスワード（pk_test_xxxxx:password）を使用
+export PAYJP_PUBLIC_KEY="pk_test_xxxxx"
+export PAYJP_PUBLIC_PASSWORD="your_password"
+cargo run --example create_token_public
+
+# サンプルがトークンIDを出力します。それを使用：
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # 前のコマンドで取得したトークン
+cargo run --example charge_with_token
+```
+
+この方法は、適切なアーキテクチャを示しています：
+- クライアントは公開可能キー（とパスワード）を使ってトークンを作成
+- サーバーはシークレットキーを使ってトークンで決済を処理
+- カードデータは決してサーバーに送信されない
+
+**方法2: HTMLページでトークンを作成（最も互換性が高い）**
+
+PAY.JPアカウントで厳格なセキュリティ設定が有効な場合（`unsafe_credit_card_param`エラーが返される場合）、付属のHTMLページを使用してください：
+
+```bash
+# 1. create_token.html をウェブブラウザで開く
+# 2. 公開可能キー（pk_test_xxxxx）を入力
+# 3. 「トークンを作成」をクリックしてトークンを作成
+# 4. 表示されたトークンIDをコピーして実行：
+
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+export PAYJP_TOKEN_ID="tok_xxxxx"  # HTMLページで作成したトークンを使用
+cargo run --example charge_with_token
+```
+
+**方法2: スクリプトでトークンを作成**
+
+```bash
+# 1. APIキーを設定
+export PAYJP_SECRET_KEY="sk_test_xxxxx"
+
+# 2. トークン作成スクリプトを実行
+./create_test_token.sh
+
+# 3. スクリプトの出力からトークンIDをコピーして実行：
+export PAYJP_TOKEN_ID="tok_xxxxx"  # スクリプト出力のトークンを使用
+cargo run --example charge_with_token
+```
+
+**方法3: curlでトークンを作成**
+
+```bash
+curl -X POST https://api.pay.jp/v1/tokens \
+  -u "sk_test_xxxxx:" \
+  -d "card[number]=4242424242424242" \
+  -d "card[exp_month]=12" \
+  -d "card[exp_year]=2030" \
+  -d "card[cvc]=123"
+
+# レスポンスからトークンIDをコピーして使用：
+export PAYJP_TOKEN_ID="tok_xxxxx"
+cargo run --example charge_with_token
+```
+
+**注意**: 方法2と方法3は、アカウントで厳格なセキュリティ設定が有効な場合、`unsafe_credit_card_param`エラーで失敗する可能性があります。その場合は、方法1（HTMLページ）を使用してください。
+
+**代替案：安全でないカードパラメータを許可する（利用可能な場合）**
+
+一部のサンプルは生のカードデータでトークンを作成します。これらは`unsafe_credit_card_param`エラーで失敗する可能性があります。PAY.JPダッシュボードにこのオプションがある場合：
+
+1. https://pay.jp/d/settings にアクセス
 2. 「テストモード設定」で「安全でないカードパラメータを許可する」を有効にしてください
-3. **重要**: この設定はテストモードのみに影響し、テスト目的でのみ使用してください
+3. 次のようにサンプルを実行： `cargo run --example create_charge`
+
+**注意**: すべてのPAY.JPアカウントにこの設定があるわけではありません。見つからない場合は、上記のHTMLページ方式を使用してください。
 
 本番コードについては、クライアント側でのトークン作成方法について[PAY.JP.jsドキュメント](https://pay.jp/docs/payjs)を参照してください。
 
