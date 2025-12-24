@@ -1,21 +1,14 @@
 //! Example: Creating a charge
 //!
-//! **IMPORTANT SECURITY NOTE:**
-//! This example demonstrates creating tokens with raw card data for testing purposes only.
-//! PAY.JP may reject direct card number submissions depending on your account settings.
+//! This example demonstrates creating a charge using a pre-created token.
 //!
-//! If you receive an "unsafe_credit_card_param" error, you have two options:
-//! 1. Enable "Allow unsafe card parameters" in your PAY.JP dashboard (Test mode only)
-//!    - Go to: https://pay.jp/d/settings
-//!    - Under "Test mode settings", enable the option
-//! 2. Use PAY.JP.js to create tokens on the client side (recommended for production)
+//! To get a token for testing, run:
+//!   PAYJP_PUBLIC_KEY=pk_test_xxxxx PAYJP_PUBLIC_PASSWORD=password cargo run --example create_token_public
 //!
-//! In production, you should ALWAYS use PAY.JP.js, payjp-ios, or payjp-android
-//! to create tokens client-side and never send raw card data to your server.
-//!
-//! Run with: cargo run --example create_charge
+//! Run with:
+//!   PAYJP_SECRET_KEY=sk_test_xxxxx PAYJP_TOKEN_ID=tok_xxxxx cargo run --example create_charge
 
-use payjp::{CardDetails, CreateChargeParams, CreateTokenParams, PayjpClient};
+use payjp::{CreateChargeParams, PayjpClient};
 use std::env;
 
 #[tokio::main]
@@ -24,34 +17,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = env::var("PAYJP_SECRET_KEY")
         .expect("PAYJP_SECRET_KEY environment variable not set");
 
+    let token_id = env::var("PAYJP_TOKEN_ID")
+        .expect("PAYJP_TOKEN_ID environment variable not set. Run create_token_public first to get a token.");
+
     let client = PayjpClient::new(api_key)?;
 
-    // First, create a token with test card data
-    // In production, tokens should be created client-side using PAY.JP.js
-    let card = CardDetails::new(
-        "4242424242424242", // Test card number
-        12,                 // Expiration month
-        2030,               // Expiration year
-        "123",              // CVC
-    )
-    .name("Taro Yamada")
-    .email("test@example.com");
-
-    println!("Creating token...");
-    let token = client
-        .tokens()
-        .create(CreateTokenParams::from_card(card))
-        .await?;
-
-    println!("Token created: {}", token.id);
+    println!("Creating charge with token: {}", token_id);
 
     // Create a charge using the token
-    println!("\nCreating charge...");
     let charge = client
         .charges()
         .create(
             CreateChargeParams::new(1000, "jpy")
-                .card(token.id)
+                .card(token_id)
                 .description("Test payment"),
         )
         .await?;
