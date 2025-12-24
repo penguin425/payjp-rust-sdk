@@ -78,7 +78,7 @@ cargo run --example create_token_public
   - ✅ `charge_with_token` - Charge creation with token works
   - ✅ `create_customer` - Customer creation with token works (CardOrId enum handles card IDs correctly)
   - ✅ `subscription` - Full subscription lifecycle works (create plan, customer, subscription, pause, resume, delete)
-  - ⚠️ `three_d_secure` - Requires special setup or 3DS-enabled test cards (not blocking for this PR)
+  - ✅ `three_d_secure` - Fixed API implementation to use correct parameters (resource_id only)
 
 ## Architecture
 
@@ -119,7 +119,10 @@ This PR enables token creation for accounts with strict security settings that b
 ## Commit History
 
 ```
+e01a302 Fix 3D Secure API implementation to match PAY.JP specification
+29fe1fb Update PR description with final testing results and statistics
 8af1f4a Fix metadata serialization issue in examples
+e502412 Update all examples to use pre-created tokens instead of raw card data
 c09a5b1 Fix metadata serialization issue in examples (earlier attempt)
 1a020e6 Add PR description template for GitHub PR creation
 45e06dd Add password parameter to PayjpPublicClient for authentication
